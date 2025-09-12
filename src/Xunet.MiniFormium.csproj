@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net8.0-windows;net9.0-windows;</TargetFrameworks>
+		<TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>embedded</DebugType>
+		<ApplicationIcon>Properties\Resources\favicon.ico</ApplicationIcon>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<!-- version numbers will be updated by build -->
+		<Version>1.0.1</Version>
+		<TotalDays>$([System.DateTime]::Now.Date.Subtract($([System.DateTime]::Parse($([System.String]::Format("{0}-09-10",2025))))).TotalDays)</TotalDays>
+		<AssemblyVersion>$(Version).$(TotalDays)</AssemblyVersion>
+		<FileVersion>$(Version).$(TotalDays)</FileVersion>
+		<Authors>徐来</Authors>
+		<Company>徐来</Company>
+		<Title>Xunet.MiniFormium</Title>
+		<Product>Xunet.MiniFormium</Product>
+		<Description>基于.NET Core的轻量级现代化窗体应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储。</Description>
+		<Summary>.NET轻量级现代化窗体应用</Summary>
+		<Copyright>Copyright © 徐来 Xulai 2025</Copyright>
+		<RootNamespace>Xunet.MiniFormium</RootNamespace>
+		<AssemblyName>Xunet.MiniFormium</AssemblyName>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/shelley-xl/Xunet.MiniFormium</RepositoryUrl>
+		<PackageId>Xunet.MiniFormium</PackageId>
+		<PackageTags>tools,helper,winform,effective,crawler</PackageTags>
+		<PackageIcon>LOGO.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/shelley-xl/Xunet.MiniFormium</PackageProjectUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Visible>false</Visible>
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\LOGO.png">
+			<Visible>false</Visible>
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Visible>false</Visible>
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\CHANGELOG.md">
+			<Visible>false</Visible>
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>
