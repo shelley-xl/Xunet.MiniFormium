@@ -6,24 +6,26 @@
 namespace Xunet.MiniFormium.Simples.Windows;
 
 /// <summary>
-/// 示例窗体
+/// 登录窗体
 /// </summary>
-public class MiniFormSimple : MiniForm
+public class LoginForm(MainForm mainForm) : QRCodeForm
 {
-    protected override string Title => "示例窗体";
+    protected override string Title => "扫码登录";
 
     protected override async Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
     {
-        await Parallel.ForEachAsync(ParallelEnumerable.Range(1, 100), async (item, token) =>
-        {
-            await AppendBoxAsync($"测试一下{item}");
-
-            await Task.Delay(1000, token);
-        });
+        await AppendQRCodeAsync("https://login.weixin.qq.com/qrcode/YbRxa9j-Qw==");
     }
 
-    protected override async Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken)
+    protected override async Task<bool> CheckLoginAsync()
     {
         await Task.CompletedTask;
+
+        return false;
+    }
+
+    protected override async Task LoginSuccessAsync()
+    {
+        await ShowMainFormAsync(mainForm);
     }
 }

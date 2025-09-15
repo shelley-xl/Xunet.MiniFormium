@@ -3,6 +3,11 @@
 // COPYRIGHTS (C) 徐来 ALL RIGHTS RESERVED.
 // GITHUB: https://github.com/shelley-xl/Xunet.MiniFormium
 
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Reflection;
+global using SqlSugar;
+global using Xunet.MiniFormium.Core;
+global using Xunet.MiniFormium.Windows;
 global using Xunet.MiniFormium.Simples.Windows;
 
 namespace Xunet.MiniFormium.Simples;

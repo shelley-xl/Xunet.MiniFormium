@@ -3,7 +3,7 @@
 // COPYRIGHTS (C) 徐来 ALL RIGHTS RESERVED.
 // GITHUB: https://github.com/shelley-xl/Xunet.MiniFormium
 
-namespace Xunet.MiniFormium;
+namespace Xunet.MiniFormium.Windows;
 
 /// <summary>
 /// 窗体基类
@@ -36,7 +36,8 @@ partial class MiniForm
     /// </summary>
     private void InitializeComponent()
     {
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MiniForm));
+        components = new Container();
+        ComponentResourceManager resources = new ComponentResourceManager(typeof(MiniForm));
         msMenu = new MenuStrip();
         tsmiWork = new ToolStripMenuItem();
         tsmiStart = new ToolStripMenuItem();
@@ -52,8 +53,15 @@ partial class MiniForm
         tsStatus = new StatusStrip();
         tsslStatus = new ToolStripStatusLabel();
         rtbMessage = new RichTextBox();
+        notifyIcon = new NotifyIcon(components);
+        cmsMenu = new ContextMenuStrip(components);
+        tsmiMainForm = new ToolStripMenuItem();
+        tsmiAboutMe2 = new ToolStripMenuItem();
+        tsmiExit = new ToolStripMenuItem();
+        tss1 = new ToolStripSeparator();
         msMenu.SuspendLayout();
         tsStatus.SuspendLayout();
+        cmsMenu.SuspendLayout();
         SuspendLayout();
         // 
         // msMenu
@@ -74,15 +82,19 @@ partial class MiniForm
         // 
         // tsmiStart
         // 
+        tsmiStart.Enabled = false;
         tsmiStart.Name = "tsmiStart";
         tsmiStart.Size = new Size(100, 22);
         tsmiStart.Text = "开启";
+        tsmiStart.Click += TsmiStart_Click;
         // 
         // tsmiStop
         // 
+        tsmiStop.Enabled = false;
         tsmiStop.Name = "tsmiStop";
         tsmiStop.Size = new Size(100, 22);
         tsmiStop.Text = "停止";
+        tsmiStop.Click += TsmiStop_Click;
         // 
         // tsmiTask
         // 
@@ -93,15 +105,19 @@ partial class MiniForm
         // 
         // tsmiExecute
         // 
+        tsmiExecute.Enabled = false;
         tsmiExecute.Name = "tsmiExecute";
         tsmiExecute.Size = new Size(100, 22);
         tsmiExecute.Text = "运行";
+        tsmiExecute.Click += TsmiExecute_Click;
         // 
         // tsmiCancel
         // 
+        tsmiCancel.Enabled = false;
         tsmiCancel.Name = "tsmiCancel";
         tsmiCancel.Size = new Size(100, 22);
         tsmiCancel.Text = "取消";
+        tsmiCancel.Click += TsmiCancel_Click;
         // 
         // tsmiLog
         // 
@@ -115,12 +131,14 @@ partial class MiniForm
         tsmiExportLog.Name = "tsmiExportLog";
         tsmiExportLog.Size = new Size(100, 22);
         tsmiExportLog.Text = "导出";
+        tsmiExportLog.Click += TsmiExportLog_Click;
         // 
         // tsmiClearLog
         // 
         tsmiClearLog.Name = "tsmiClearLog";
         tsmiClearLog.Size = new Size(100, 22);
         tsmiClearLog.Text = "清空";
+        tsmiClearLog.Click += TsmiClearLog_Click;
         // 
         // tsmiAbout
         // 
@@ -134,6 +152,7 @@ partial class MiniForm
         tsmiAboutMe.Name = "tsmiAboutMe";
         tsmiAboutMe.Size = new Size(124, 22);
         tsmiAboutMe.Text = "关于软件";
+        tsmiAboutMe.Click += TsmiAboutMe_Click;
         // 
         // tsStatus
         // 
@@ -162,6 +181,45 @@ partial class MiniForm
         rtbMessage.TabIndex = 2;
         rtbMessage.Text = "";
         // 
+        // notifyIcon
+        // 
+        notifyIcon.ContextMenuStrip = cmsMenu;
+        notifyIcon.Icon = (Icon)resources.GetObject("notifyIcon.Icon");
+        notifyIcon.Visible = true;
+        notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        // 
+        // cmsMenu
+        // 
+        cmsMenu.Items.AddRange(new ToolStripItem[] { tsmiMainForm, tss1, tsmiAboutMe2, tsmiExit });
+        cmsMenu.Name = "cmsMenu";
+        cmsMenu.Size = new Size(181, 98);
+        // 
+        // tsmiMainForm
+        // 
+        tsmiMainForm.Name = "tsmiMainForm";
+        tsmiMainForm.Size = new Size(180, 22);
+        tsmiMainForm.Text = "主窗体";
+        tsmiMainForm.Click += TsmiMainForm_Click;
+        // 
+        // tsmiAboutMe2
+        // 
+        tsmiAboutMe2.Name = "tsmiAboutMe2";
+        tsmiAboutMe2.Size = new Size(180, 22);
+        tsmiAboutMe2.Text = "关于";
+        tsmiAboutMe2.Click += TsmiAboutMe2_Click;
+        // 
+        // tsmiExit
+        // 
+        tsmiExit.Name = "tsmiExit";
+        tsmiExit.Size = new Size(180, 22);
+        tsmiExit.Text = "退出";
+        tsmiExit.Click += TsmiExit_Click;
+        // 
+        // tss1
+        // 
+        tss1.Name = "tss1";
+        tss1.Size = new Size(177, 6);
+        // 
         // MiniForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
@@ -181,6 +239,7 @@ partial class MiniForm
         msMenu.PerformLayout();
         tsStatus.ResumeLayout(false);
         tsStatus.PerformLayout();
+        cmsMenu.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -202,4 +261,10 @@ partial class MiniForm
     private ToolStripMenuItem tsmiExportLog;
     private ToolStripMenuItem tsmiClearLog;
     private ToolStripMenuItem tsmiAboutMe;
+    private NotifyIcon notifyIcon;
+    private ContextMenuStrip cmsMenu;
+    private ToolStripMenuItem tsmiMainForm;
+    private ToolStripMenuItem tsmiAboutMe2;
+    private ToolStripMenuItem tsmiExit;
+    private ToolStripSeparator tss1;
 }

@@ -13,9 +13,44 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        // To customize application configuration such as set high DPI settings or default font,
-        // see https://aka.ms/applicationconfiguration.
-        ApplicationConfiguration.Initialize();
-        Application.Run(new MiniFormSimple());
+        var builder = MiniFormiumApplication.CreateBuilder();
+
+        builder.Services.AddMiniFormium<LoginForm>(options =>
+        {
+            options.Headers = new()
+            {
+                {
+                    HeaderNames.UserAgent, "Mozilla/5.0 (iPhone; CPU iPhone OS 6_1_3 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Mobile/10B329 MicroMessenger/5.0.1"
+                }
+            };
+            options.Storage = new()
+            {
+                DataVersion = "25.9.15.1036",
+                DbName = "Xunet.MiniFormium.Simples",
+                EntityTypes = [],
+            };
+            options.Snowflake = new()
+            {
+                WorkerId = 1,
+                DataCenterId = 1,
+            };
+        });
+
+        builder.Services.AddWebApi((provider, services) =>
+        {
+            var db = provider.GetRequiredService<ISqlSugarClient>();
+
+            services.AddSingleton(db);
+        });
+
+        var app = builder.Build();
+
+        app.UseMiniFormium();
+
+        app.UseSingleApp();
+
+        app.UseWebApi();
+
+        app.Run();
     }
 }

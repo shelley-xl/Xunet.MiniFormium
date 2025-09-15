@@ -6,9 +6,17 @@
 namespace Xunet.MiniFormium.Core;
 
 /// <summary>
-/// IMiniFormium
+/// 分布式雪花Id
 /// </summary>
-public interface IMiniFormium
+public class Snowflake
 {
+    /// <summary>
+    /// 唯一工作机器Id
+    /// </summary>
+    public ushort WorkerId { get; set; } = 1;
 
+    /// <summary>
+    /// 唯一数据中心Id
+    /// </summary>
+    public ushort DataCenterId { get; set; } = 1;
 }

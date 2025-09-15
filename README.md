@@ -2,7 +2,7 @@
 
 基于.NET Core的轻量级现代化窗体应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储。
 
-Support .NET 8.0/9.0
+Support .NET 8.0+
 
 [![Nuget](https://img.shields.io/nuget/v/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/packages/Xunet.MiniFormium)
 [![Downloads](https://img.shields.io/nuget/dt/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/stats/packages/Xunet.MiniFormium?groupby=Version)
@@ -42,9 +42,9 @@ internal static class Program
             };
             options.Storage = new()
             {
-                DataVersion = "24.8.9.1822",
+                DataVersion = "25.9.15.1036",
                 DbName = "Xunet.MiniFormium.Simples",
-                EntityTypes = [typeof(CnBlogsModel)],
+                EntityTypes = [],
             };
             options.Snowflake = new()
             {
@@ -53,7 +53,7 @@ internal static class Program
             };
         });
 
-        builder.Services.AddWebApi(Assembly.GetExecutingAssembly(), (provider, services) =>
+        builder.Services.AddWebApi((provider, services) =>
         {
             var db = provider.GetRequiredService<ISqlSugarClient>();
 
@@ -76,7 +76,50 @@ internal static class Program
 MainForm.cs
 
 ```c#
+public class MainForm : MiniForm
+{
+    protected override string Title => $"示例窗体 - {Version}";
 
+    protected override int DoWorkInterval => GetConfigValue<int>("DoWorkInterval");
+
+    protected override async Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+    }
+
+    protected override async Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+    }
+
+    protected override async Task DoWorkAsync(CancellationToken cancellationToken)
+    {
+        await AppendBoxAsync("开始执行任务 ...");
+
+        await Parallel.ForEachAsync(ParallelEnumerable.Range(1, 100), async (item, token) =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await AppendBoxAsync($"任务...{Guid.NewGuid():N}...{item}...ok");
+
+            await Task.Delay(1000, token);
+        });
+
+        await AppendBoxAsync("任务执行完成！");
+    }
+
+    protected override async Task DoCanceledAsync(OperationCanceledException ex)
+    {
+        await AppendBoxAsync("任务取消", Color.Red);
+        await AppendBoxAsync(ex.Message, Color.Red);
+    }
+
+    protected override async Task DoExceptionAsync(Exception ex, CancellationToken cancellationToken)
+    {
+        await AppendBoxAsync("任务异常", Color.Red);
+        await AppendBoxAsync(ex.Message, Color.Red);
+    }
+}
 ```
 
 ## 更新日志
