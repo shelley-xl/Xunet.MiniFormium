@@ -4,6 +4,11 @@
 
 Support .NET 8.0+
 
+[![Nuget](https://img.shields.io/nuget/v/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/packages/Xunet.MiniFormium)
+[![Downloads](https://img.shields.io/nuget/dt/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/stats/packages/Xunet.MiniFormium?groupby=Version)
+[![License](https://img.shields.io/github/license/shelley-xl/Xunet.MiniFormium.svg)](https://github.com/shelley-xl/Xunet.MiniFormium/blob/master/LICENSE)
+![Vistors](https://visitor-badge.laobi.icu/badge?page_id=https://github.com/shelley-xl/Xunet.MiniFormium)
+
 功能特性：
 
 - 轻量级现代化窗体应用框架，支持.NET 8.0及更高版本
@@ -17,11 +22,6 @@ Support .NET 8.0+
 - 支持在线时长、内存占用情况显示
 - 面向异步编程，支持异步方法
 - 面向对象编程，实现封装、继承、多态
-
-[![Nuget](https://img.shields.io/nuget/v/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/packages/Xunet.MiniFormium)
-[![Downloads](https://img.shields.io/nuget/dt/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/stats/packages/Xunet.MiniFormium?groupby=Version)
-[![License](https://img.shields.io/github/license/shelley-xl/Xunet.MiniFormium.svg)](https://github.com/shelley-xl/Xunet.MiniFormium/blob/master/LICENSE)
-![Vistors](https://visitor-badge.laobi.icu/badge?page_id=https://github.com/shelley-xl/Xunet.MiniFormium)
 
 ## 安装
 
