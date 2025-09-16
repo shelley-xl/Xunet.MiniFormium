@@ -203,6 +203,10 @@ public class MainForm : MiniForm
 
 [simples](simples)
 
+## 官方博客
+
+[清风徐来](https://www.51xulai.net/)
+
 ## 更新日志
 
 [CHANGELOG](CHANGELOG.md)
