@@ -59,18 +59,35 @@ public class MainForm : MiniForm
     /// <returns></returns>
     protected override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        await AppendBoxAsync("开始执行任务 ...");
+        await AppendBoxAsync("开始执行任务，请稍后 ...", ColorTranslator.FromHtml("#1296db"));
 
-        await Parallel.ForEachAsync(ParallelEnumerable.Range(1, 100), async (item, token) =>
+        var html = await DefaultClient.GetStringAsync("https://www.cnblogs.com/", cancellationToken);
+
+        CreateHtmlDocument(html);
+
+        var list = FindElementsByXPath("//*[@id=\"post_list\"]/article");
+
+        await Parallel.ForEachAsync(list, async (item, token) =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await AppendBoxAsync($"任务...{Guid.NewGuid():N}...{item}...ok");
+            var model = new CnBlogsModel
+            {
+                Id = CreateNextIdString(),
+                Title = FindText(FindElementByXPath(item, "section/div/a")),
+                Url = FindAttributeValue(FindElementByXPath(item, "section/div/a"), "href"),
+                Summary = Trim(FindText(FindElementByXPath(item, "section/div/p"))),
+                CreateTime = DateTime.Now
+            };
+
+            await AppendBoxAsync($"{model.Title} ...");
+
+            await Db.Insertable(model).ExecuteCommandAsync(cancellationToken);
 
             await Task.Delay(1000, token);
         });
 
-        await AppendBoxAsync("任务执行完成！");
+        await AppendBoxAsync("任务执行完成！", ColorTranslator.FromHtml("#1296db"));
     }
 
     /// <summary>

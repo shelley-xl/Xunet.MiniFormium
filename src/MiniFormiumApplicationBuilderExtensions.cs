@@ -66,16 +66,16 @@ public static class MiniFormiumApplicationBuilderExtensions
 
         services.AddSingleton(Configuration);
 
-        if (startupOptions != null && startupOptions.Headers != null)
+        services.AddHttpClient("default", client =>
         {
-            services.AddHttpClient("default", client =>
+            if (startupOptions != null && startupOptions.Headers != null)
             {
                 foreach (var item in startupOptions.Headers)
                 {
                     client.DefaultRequestHeaders.Add(item.Key, item.Value);
                 }
-            });
-        }
+            }
+        });
 
         if (startupOptions != null && startupOptions.Storage != null)
         {
