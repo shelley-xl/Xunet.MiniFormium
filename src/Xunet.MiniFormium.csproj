@@ -13,6 +13,8 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
 		<!-- version numbers will be updated by build -->
 		<Version>1.0.1</Version>
 		<TotalDays>$([System.DateTime]::Now.Date.Subtract($([System.DateTime]::Parse($([System.String]::Format("{0}-09-10",2025))))).TotalDays)</TotalDays>

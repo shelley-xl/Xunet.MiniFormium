@@ -8,7 +8,7 @@ namespace Xunet.MiniFormium.Simples.Windows;
 /// <summary>
 /// 登录窗体
 /// </summary>
-public class LoginForm(MainForm mainForm) : QRCodeForm
+public class LoginForm(MainForm mainForm, BrowserForm browserForm) : QRCodeForm
 {
     /// <summary>
     /// 窗体标题
@@ -45,6 +45,6 @@ public class LoginForm(MainForm mainForm) : QRCodeForm
     /// <returns></returns>
     protected override async Task LoginSuccessAsync()
     {
-        await ShowFormAsync(mainForm);
+        await ShowFormAsync(browserForm, mainForm);
     }
 }

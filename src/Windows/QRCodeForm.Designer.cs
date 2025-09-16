@@ -41,6 +41,10 @@ partial class QRCodeForm
         lblMessage = new Label();
         ((ISupportInitialize)pbQRCode).BeginInit();
         SuspendLayout();
+
+        Controls.Remove(msMenu);
+        Controls.Remove(tsStatus);
+
         // 
         // pbQRCode
         // 

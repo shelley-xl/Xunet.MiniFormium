@@ -10,6 +10,8 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.OpenApi.Models;
+global using Microsoft.Web.WebView2.WinForms;
+global using Microsoft.Web.WebView2.Core;
 global using System.ComponentModel;
 global using System.Diagnostics;
 global using System.Reflection;

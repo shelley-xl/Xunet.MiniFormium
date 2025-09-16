@@ -41,6 +41,10 @@ partial class AboutForm
         lblAbout = new Label();
         ((ISupportInitialize)pbLogo).BeginInit();
         SuspendLayout();
+
+        Controls.Remove(msMenu);
+        Controls.Remove(tsStatus);
+
         // 
         // pbLogo
         // 

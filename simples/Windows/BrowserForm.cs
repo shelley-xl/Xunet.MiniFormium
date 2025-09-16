@@ -8,7 +8,7 @@ namespace Xunet.MiniFormium.Simples.Windows;
 /// <summary>
 /// 示例窗体
 /// </summary>
-public class MainForm : MiniForm
+public class BrowserForm : WebView2Form
 {
     /// <summary>
     /// 窗体标题
@@ -26,21 +26,9 @@ public class MainForm : MiniForm
     protected override int DoWorkInterval => GetConfigValue<int>("DoWorkInterval");
 
     /// <summary>
-    /// 窗体关闭
+    /// 链接地址
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected override Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken)
-    {
-        if (e.CloseReason == CloseReason.UserClosing)
-        {
-            Application.Exit();
-        }
-
-        return Task.CompletedTask;
-    }
+    protected override string Url => "https://www.baidu.com";
 
     /// <summary>
     /// 任务执行
@@ -49,33 +37,7 @@ public class MainForm : MiniForm
     /// <returns></returns>
     protected override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        await AppendBoxAsync("开始执行任务，请稍后 ...", ColorTranslator.FromHtml("#1296db"));
-
-        var html = await DefaultClient.GetStringAsync("https://www.cnblogs.com/", cancellationToken);
-
-        CreateHtmlDocument(html);
-
-        var list = FindElementsByXPath("//*[@id=\"post_list\"]/article");
-
-        await Parallel.ForEachAsync(list, async (item, token) =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var model = new CnBlogsModel
-            {
-                Title = FindText(FindElementByXPath(item, "section/div/a")),
-                Url = FindAttributeValue(FindElementByXPath(item, "section/div/a"), "href"),
-                Summary = Trim(FindText(FindElementByXPath(item, "section/div/p"))),
-            };
-
-            await AppendBoxAsync($"{model.Title} ...");
-
-            await Db.Insertable(model).ExecuteCommandAsync(cancellationToken);
-
-            await Task.Delay(1000, token);
-        });
-
-        await AppendBoxAsync("任务执行完成！", ColorTranslator.FromHtml("#1296db"));
+        await AppendBoxAsync("任务执行", ColorTranslator.FromHtml("#1296db"));
     }
 
     /// <summary>
@@ -99,5 +61,39 @@ public class MainForm : MiniForm
     {
         await AppendBoxAsync("任务异常", Color.Red);
         await AppendBoxAsync(ex.Message, Color.Red);
+    }
+
+    /// <summary>
+    /// 初始化完成事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override async Task WebView2InitializationCompletedAsync(object? sender, CoreWebView2InitializationCompletedEventArgs e, CancellationToken cancellationToken)
+    {
+        await AppendBoxAsync("初始化完成", ColorTranslator.FromHtml("#1296db"));
+    }
+
+    /// <summary>
+    /// 导航完成事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override async Task WebView2NavigationCompletedAsync(object? sender, CoreWebView2NavigationCompletedEventArgs e, CancellationToken cancellationToken)
+    {
+        if (sender is WebView2 webView2 && e.IsSuccess)
+        {
+            await AppendBoxAsync(webView2.Source.AbsoluteUri);
+
+            switch (webView2.Source.AbsolutePath)
+            {
+                case string x when x.Equals("/"):
+                    webView2.Source = new Uri("https://www.51xulai.net");
+                    break;
+            }
+        }
     }
 }

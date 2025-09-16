@@ -6,7 +6,8 @@
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.ComponentModel;
+global using Microsoft.Web.WebView2.Core;
+global using Microsoft.Web.WebView2.WinForms;
 global using SqlSugar;
 global using Xunet.MiniFormium.Controllers;
 global using Xunet.MiniFormium.Core;

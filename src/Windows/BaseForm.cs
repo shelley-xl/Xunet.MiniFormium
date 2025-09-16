@@ -35,6 +35,26 @@ public partial class BaseForm : Form, IMiniFormium
     /// </summary>
     protected virtual bool DisabledAboutForm { get; } = false;
 
+    /// <summary>
+    /// 工作频率（单位：秒），设置 0 时仅工作一次
+    /// </summary>
+    protected virtual int DoWorkInterval { get; } = 0;
+
+    /// <summary>
+    /// 日志控件
+    /// </summary>
+    protected virtual RichTextBox? OutputTextBox { get; }
+
+    /// <summary>
+    /// 显示菜单
+    /// </summary>
+    protected virtual bool ShowMenu { get; } = false;
+
+    /// <summary>
+    /// 显示状态栏
+    /// </summary>
+    protected virtual bool ShowStatus { get; } = false;
+
     #endregion
 
     #region 继承属性
@@ -128,6 +148,27 @@ public partial class BaseForm : Form, IMiniFormium
     #region 私有属性
 
     /// <summary>
+    /// 信号量
+    /// </summary>
+    private readonly static AsyncSemaphore AsyncSemaphore = new();
+
+    /// <summary>
+    /// 作业名称
+    /// </summary>
+    private string JobName => GetType()?.FullName ?? Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// 接口应用
+    /// </summary>
+    private static WebApplication? WebApp
+    {
+        get
+        {
+            return DependencyResolver.Current?.GetService<WebApplication>();
+        }
+    }
+
+    /// <summary>
     /// 配置
     /// </summary>
     private static IConfigurationRoot Configuration
@@ -159,8 +200,6 @@ public partial class BaseForm : Form, IMiniFormium
 
     #region 重写方法
 
-    #region 窗体加载
-
     /// <summary>
     /// 窗体加载
     /// </summary>
@@ -169,10 +208,6 @@ public partial class BaseForm : Form, IMiniFormium
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     protected virtual Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
-
-    #endregion
-
-    #region 窗体关闭
 
     /// <summary>
     /// 窗体关闭
@@ -183,7 +218,27 @@ public partial class BaseForm : Form, IMiniFormium
     /// <returns></returns>
     protected virtual Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
 
-    #endregion
+    /// <summary>
+    /// 任务执行
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task DoWorkAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    /// <summary>
+    /// 任务取消
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <returns></returns>
+    protected virtual Task DoCanceledAsync(OperationCanceledException ex) => Task.CompletedTask;
+
+    /// <summary>
+    /// 任务异常
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task DoExceptionAsync(Exception ex, CancellationToken cancellationToken) => Task.CompletedTask;
 
     #endregion
 
@@ -289,14 +344,17 @@ public partial class BaseForm : Form, IMiniFormium
     /// <summary>
     /// 打开窗体
     /// </summary>
-    /// <param name="main"></param>
-    protected Task ShowFormAsync(Form main)
+    /// <param name="forms"></param>
+    protected Task ShowFormAsync(params Form[] forms)
     {
         InvokeOnUIThread(() =>
         {
             Hide();
-            main.Show();
-            main.Activate();
+            foreach (var form in forms)
+            {
+                form.Show();
+                form.Activate();
+            }
         });
 
         return Task.CompletedTask;
@@ -522,6 +580,163 @@ public partial class BaseForm : Form, IMiniFormium
 
     #endregion
 
+    #region 日志输出
+
+    /// <summary>
+    /// 日志输出
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="color"></param>
+    protected Task AppendBoxAsync(string text, Color? color = null)
+    {
+        if (OutputTextBox == null) return Task.CompletedTask;
+
+        InvokeOnUIThread(() =>
+        {
+            if (OutputTextBox.Lines.Length > 0)
+            {
+                OutputTextBox.AppendText(Environment.NewLine);
+            }
+            ;
+            OutputTextBox.SelectionStart = OutputTextBox.TextLength;
+            OutputTextBox.SelectionLength = 0;
+            OutputTextBox.SelectionColor = color ?? Color.Black;
+            OutputTextBox.AppendText($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}：{text}");
+            OutputTextBox.SelectionColor = OutputTextBox.ForeColor;
+            OutputTextBox.ScrollToCaret();
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region 私有方法
+
+    #region 在线时长、内存占用情况显示
+
+    private Task OnlineTimerAsync()
+    {
+        PerformanceCounter? counter = null;
+
+        Task.Run(() =>
+        {
+            counter = new PerformanceCounter("Process", "Working Set - Private", Process.GetCurrentProcess().ProcessName);
+        });
+
+        Task.Run(async () =>
+        {
+            if (WebApp != null && WebApp.Urls.Count > 0)
+            {
+                InvokeOnUIThread(new Action(() =>
+                {
+                    var tsslStatus = tsStatus.Items[0];
+                    var portLabel = new ToolStripStatusLabel
+                    {
+                        Text = $"监听端口：{string.Join(",", WebApp.Urls.Select(x => new Uri(x).Port))}",
+                    };
+                    tsStatus.Items.Clear();
+                    tsStatus.Items.Add(portLabel);
+                    tsStatus.Items.Add(new ToolStripSeparator());
+                    tsStatus.Items.Add(tsslStatus);
+                }));
+            }
+
+            var seconds = 0;
+
+            while (!IsDisposed && !TokenSource.IsCancellationRequested)
+            {
+                var usedMemory = 0d;
+                if (counter != null)
+                {
+                    usedMemory = Math.Round(counter.RawValue / 1024.0 / 1024.0, 1);
+                }
+                int hours = seconds / 3600;
+                int minutes = seconds % 3600 / 60;
+                int remainingSeconds = seconds % 3600 % 60;
+                var nextRun = "未开启定时作业";
+
+                if (JobManager.GetSchedule(JobName) is Schedule doWork)
+                {
+                    nextRun = $"下次执行还剩：{(int)(doWork.NextRun - DateTime.Now).TotalSeconds:00} 秒";
+                }
+
+                InvokeOnUIThread(new Action(() =>
+                {
+                    tsslStatus.Text = $"在线时长：{hours:00} 小时 {minutes:00} 分 {remainingSeconds:00} 秒，内存：{usedMemory:0.0} MB，{nextRun}";
+                }));
+
+                seconds++;
+
+                await Task.Delay(1000);
+            }
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 添加周期作业
+
+    private Task AddJobAsync()
+    {
+        JobManager.AddJob(DoWork, schedule =>
+        {
+            schedule.WithName(JobName);
+            if (DoWorkInterval > 0)
+            {
+                schedule.ToRunNow().AndEvery(DoWorkInterval).Seconds();
+                InvokeOnUIThread(() =>
+                {
+                    tsmiStop.Enabled = true;
+                });
+            }
+            else
+            {
+                schedule.ToRunNow();
+            }
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private async void DoWork()
+    {
+        using (await AsyncSemaphore.WaitAsync())
+        {
+            try
+            {
+                InvokeOnUIThread(() =>
+                {
+                    tsmiExecute.Enabled = false;
+                    tsmiCancel.Enabled = true;
+                });
+                await DoWorkAsync(TokenSource.Token);
+            }
+            catch (OperationCanceledException ex)
+            {
+                await DoCanceledAsync(ex);
+            }
+            catch (Exception ex)
+            {
+                await DoExceptionAsync(ex, TokenSource.Token);
+            }
+            finally
+            {
+                InvokeOnUIThread(() =>
+                {
+                    tsmiExecute.Enabled = true;
+                    tsmiCancel.Enabled = false;
+                });
+            }
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region 窗体加载事件
@@ -529,7 +744,6 @@ public partial class BaseForm : Form, IMiniFormium
     private void BaseForm_Load(object sender, EventArgs e)
     {
         Text = Title;
-        MinimumSize = Size;
 
         if (ShowTray)
         {
@@ -539,8 +753,22 @@ public partial class BaseForm : Form, IMiniFormium
 
         if (DisabledAboutForm)
         {
+            msMenu.Items.Remove(tsmiAbout);
             cmsMenu.Items.Remove(tsmiAboutMe2);
         }
+
+        if (ShowMenu)
+        {
+            msMenu.Visible = true;
+        }
+
+        if (ShowStatus)
+        {
+            tsStatus.Visible = true;
+            Task.Run(OnlineTimerAsync);
+        }
+
+        Task.Run(AddJobAsync);
 
         OnLoadAsync(sender, e, TokenSource.Token);
     }
@@ -561,6 +789,99 @@ public partial class BaseForm : Form, IMiniFormium
 
         OnCloseAsync(sender, e, TokenSource.Token);
     }
+
+    #endregion
+
+    #region 菜单事件
+
+    #region 开启作业
+
+    private void TsmiStart_Click(object sender, EventArgs e)
+    {
+        tsmiStart.Enabled = false;
+        tsmiStop.Enabled = true;
+
+        Task.Run(AddJobAsync);
+    }
+
+    #endregion
+
+    #region 停止作业
+
+    private void TsmiStop_Click(object sender, EventArgs e)
+    {
+        tsmiStart.Enabled = true;
+        tsmiStop.Enabled = false;
+
+        JobManager.RemoveJob(JobName);
+    }
+
+    #endregion
+
+    #region 执行任务
+
+    private void TsmiExecute_Click(object sender, EventArgs e)
+    {
+        Task.Run(DoWork);
+    }
+
+    #endregion
+
+    #region 取消任务
+
+    private void TsmiCancel_Click(object sender, EventArgs e)
+    {
+        TokenSource.Cancel();
+        TokenSource = new CancellationTokenSource();
+    }
+
+    #endregion
+
+    #region 导出日志
+
+    private void TsmiExportLog_Click(object sender, EventArgs e)
+    {
+        var sfd = new SaveFileDialog
+        {
+            // 设置保存文件对话框的标题
+            Title = "请选择要保存的文件路径",
+            // 初始化保存目录，默认exe文件目录
+            InitialDirectory = Application.StartupPath,
+            // 设置保存文件的类型
+            Filter = "日志文件|*.log",
+            // 设置默认文件名
+            FileName = $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}.log"
+        };
+        if (sfd.ShowDialog() == DialogResult.OK)
+        {
+            // 获得保存文件的路径
+            string filePath = sfd.FileName;
+            // 保存
+            using var writer = new StreamWriter(filePath);
+            writer.Write(OutputTextBox?.Text);
+            writer.Flush();
+        }
+    }
+
+    #endregion
+
+    #region 清空日志
+
+    private void TsmiClearLog_Click(object sender, EventArgs e)
+    {
+        OutputTextBox?.Clear();
+    }
+
+    #endregion
+
+    #region 关于软件
+
+    private void TsmiAboutMe_Click(object sender, EventArgs e)
+    {
+        DependencyResolver.Current?.GetService<AboutForm>()?.ShowDialog();
+    }
+
+    #endregion
 
     #endregion
 
