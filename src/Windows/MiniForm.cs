@@ -6,16 +6,11 @@
 namespace Xunet.MiniFormium.Windows;
 
 /// <summary>
-/// 窗体基类
+/// 迷你窗体
 /// </summary>
-public partial class MiniForm : Form, IMiniFormium
+public partial class MiniForm : BaseForm, IMiniFormium
 {
     #region 私有属性
-
-    /// <summary>
-    /// 取消令牌
-    /// </summary>
-    private static CancellationTokenSource TokenSource { get; set; } = new();
 
     /// <summary>
     /// 信号量
@@ -23,7 +18,7 @@ public partial class MiniForm : Form, IMiniFormium
     private readonly static AsyncSemaphore AsyncSemaphore = new();
 
     /// <summary>
-    /// WebApp
+    /// 接口应用
     /// </summary>
     private static WebApplication? WebApp
     {
@@ -33,76 +28,33 @@ public partial class MiniForm : Form, IMiniFormium
         }
     }
 
-    /// <summary>
-    /// 配置
-    /// </summary>
-    private static IConfigurationRoot Configuration
-    {
-        get
-        {
-            return DependencyResolver.Current?.GetRequiredService<IConfigurationRoot>() ?? throw new InvalidOperationException("No service for type 'IConfigurationRoot' has been registered.");
-        }
-    }
-
-    /// <summary>
-    /// 屏幕缩放比例
-    /// </summary>
-    private static float ScalingFactor
-    {
-        get
-        {
-            return DpiHelper.GetDpiScalingFactor();
-        }
-    }
-
     #endregion
 
-    #region 虚属性，子类可重写
-
-    /// <summary>
-    /// 窗体标题
-    /// </summary>
-    protected virtual string? Title { get; } = "基础窗体";
+    #region 重写属性
 
     /// <summary>
     /// 工作频率（单位：秒），设置 0 时仅工作一次
     /// </summary>
     protected virtual int DoWorkInterval { get; } = 0;
 
-    /// <summary>
-    /// 禁用关于窗体
-    /// </summary>
-    protected virtual bool DisabledAboutForm { get; } = false;
+    #endregion
+
+    #region 构造函数
 
     /// <summary>
-    /// 最小化到系统托盘
+    /// 构造函数
     /// </summary>
-    protected virtual bool IsTray { get; } = false;
+    public MiniForm()
+    {
+        InitializeComponent();
+    }
 
     #endregion
 
-    #region 虚方法，子类可重写
+    #region 重写方法
 
     /// <summary>
-    /// 窗体加载
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected virtual Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
-
-    /// <summary>
-    /// 窗体关闭
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected virtual Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
-
-    /// <summary>
-    /// 执行任务
+    /// 任务执行
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -125,124 +77,7 @@ public partial class MiniForm : Form, IMiniFormium
 
     #endregion
 
-    #region 构造函数
-
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    public MiniForm()
-    {
-        InitializeComponent();
-
-        Text = Title;
-        notifyIcon.Text = Title;
-
-        if (DisabledAboutForm)
-        {
-            msMenu.Items.Remove(tsmiAbout);
-            cmsMenu.Items.Remove(tsmiAboutMe2);
-        }
-    }
-
-    #endregion
-
-    #region 通用属性，子类可继承
-
-    #region 版本号
-
-    /// <summary>
-    /// 版本号
-    /// </summary>
-    protected static string Version
-    {
-        get
-        {
-            return $"v{Assembly.GetEntryAssembly()?.GetName().Version}";
-        }
-    }
-
-    #endregion
-
-    #region 默认请求客户端
-
-    /// <summary>
-    /// 默认请求客户端
-    /// </summary>
-    protected static HttpClient DefaultClient
-    {
-        get
-        {
-            return DependencyResolver.Current?.GetRequiredService<IHttpClientFactory>()?.CreateClient("default") ?? throw new InvalidOperationException("No headers for type 'StartupOptions.RequestHeaders' has been initialized.");
-        }
-    }
-
-    #endregion
-
-    #region 数据库访问
-
-    /// <summary>
-    /// 数据库访问
-    /// </summary>
-    protected static ISqlSugarClient Db
-    {
-        get
-        {
-            return DependencyResolver.Current?.GetRequiredService<ISqlSugarClient>() ?? throw new InvalidOperationException("No storage for type 'StartupOptions.SqliteStorage' has been initialized.");
-        }
-    }
-
-    #endregion
-
-    #endregion
-
-    #region 通用方法，子类可继承
-
-    #region 在UI线程上异步执行Action
-
-    /// <summary>
-    /// 在UI线程上异步执行Action
-    /// </summary>
-    /// <param name="action"></param>
-    protected void InvokeOnUIThread(Action action)
-    {
-        if (IsDisposed || TokenSource.IsCancellationRequested) return;
-
-        if (InvokeRequired)
-        {
-            Invoke(new System.Windows.Forms.MethodInvoker(action));
-        }
-        else
-        {
-            action.Invoke();
-        }
-    }
-
-    #endregion
-
-    #region 获取配置
-
-    /// <summary>
-    /// 获取配置
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    protected static T? GetConfigValue<T>(string key)
-    {
-        return Configuration.GetSection(key).Get<T>();
-    }
-
-    /// <summary>
-    /// 获取配置
-    /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    protected static string? GetConfigValue(string key)
-    {
-        return Configuration[key];
-    }
-
-    #endregion
+    #region 继承方法
 
     #region 日志输出
 
@@ -402,27 +237,23 @@ public partial class MiniForm : Form, IMiniFormium
 
     #endregion
 
-    #region 窗体加载事件
+    #region 窗体加载
 
-    private void MiniForm_Load(object sender, EventArgs e)
+    /// <summary>
+    /// 窗体加载
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
     {
-        Task.WhenAll(OnlineTimerAsync(), AddJobAsync(), OnLoadAsync(sender, e, TokenSource.Token));
-    }
-
-    #endregion
-
-    #region 窗体关闭事件
-
-    private void MiniForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        if (IsTray)
+        if (DisabledAboutForm)
         {
-            e.Cancel = true;
-            Hide();
-            notifyIcon.Visible = true;
+            msMenu.Items.Remove(tsmiAbout);
         }
 
-        Task.Run(() => OnCloseAsync(sender, e, TokenSource.Token));
+        return Task.WhenAll(OnlineTimerAsync(), AddJobAsync());
     }
 
     #endregion
@@ -514,54 +345,6 @@ public partial class MiniForm : Form, IMiniFormium
     private void TsmiAboutMe_Click(object sender, EventArgs e)
     {
         DependencyResolver.Current?.GetService<AboutForm>()?.ShowDialog();
-    }
-
-    #endregion
-
-    #endregion
-
-    #region 系统托盘事件
-
-    #region 系统托盘
-
-    private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
-    {
-        if (e.Button == MouseButtons.Left)
-        {
-            Show();
-            Activate();
-        }
-    }
-
-    #endregion
-
-    #region 主窗体
-
-    private void TsmiMainForm_Click(object sender, EventArgs e)
-    {
-        Show();
-        Activate();
-    }
-
-    #endregion
-
-    #region 关于
-
-    private void TsmiAboutMe2_Click(object sender, EventArgs e)
-    {
-        DependencyResolver.Current?.GetService<AboutForm>()?.ShowDialog();
-    }
-
-    #endregion
-
-    #region 退出
-
-    private void TsmiExit_Click(object sender, EventArgs e)
-    {
-        TokenSource.Cancel();
-        TokenSource = new CancellationTokenSource();
-        notifyIcon.Dispose();
-        Environment.Exit(0);
     }
 
     #endregion

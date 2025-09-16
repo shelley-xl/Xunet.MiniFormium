@@ -6,7 +6,7 @@
 namespace Xunet.MiniFormium.Windows;
 
 /// <summary>
-/// 窗体基类
+/// 迷你窗体
 /// </summary>
 partial class MiniForm
 {
@@ -36,7 +36,6 @@ partial class MiniForm
     /// </summary>
     private void InitializeComponent()
     {
-        components = new Container();
         ComponentResourceManager resources = new ComponentResourceManager(typeof(MiniForm));
         msMenu = new MenuStrip();
         tsmiWork = new ToolStripMenuItem();
@@ -53,15 +52,8 @@ partial class MiniForm
         tsStatus = new StatusStrip();
         tsslStatus = new ToolStripStatusLabel();
         rtbMessage = new RichTextBox();
-        notifyIcon = new NotifyIcon(components);
-        cmsMenu = new ContextMenuStrip(components);
-        tsmiMainForm = new ToolStripMenuItem();
-        tsmiAboutMe2 = new ToolStripMenuItem();
-        tsmiExit = new ToolStripMenuItem();
-        tss1 = new ToolStripSeparator();
         msMenu.SuspendLayout();
         tsStatus.SuspendLayout();
-        cmsMenu.SuspendLayout();
         SuspendLayout();
         // 
         // msMenu
@@ -181,45 +173,6 @@ partial class MiniForm
         rtbMessage.TabIndex = 2;
         rtbMessage.Text = "";
         // 
-        // notifyIcon
-        // 
-        notifyIcon.ContextMenuStrip = cmsMenu;
-        notifyIcon.Icon = (Icon)resources.GetObject("notifyIcon.Icon");
-        notifyIcon.Visible = true;
-        notifyIcon.MouseClick += NotifyIcon_MouseClick;
-        // 
-        // cmsMenu
-        // 
-        cmsMenu.Items.AddRange(new ToolStripItem[] { tsmiMainForm, tss1, tsmiAboutMe2, tsmiExit });
-        cmsMenu.Name = "cmsMenu";
-        cmsMenu.Size = new Size(181, 98);
-        // 
-        // tsmiMainForm
-        // 
-        tsmiMainForm.Name = "tsmiMainForm";
-        tsmiMainForm.Size = new Size(180, 22);
-        tsmiMainForm.Text = "主窗体";
-        tsmiMainForm.Click += TsmiMainForm_Click;
-        // 
-        // tsmiAboutMe2
-        // 
-        tsmiAboutMe2.Name = "tsmiAboutMe2";
-        tsmiAboutMe2.Size = new Size(180, 22);
-        tsmiAboutMe2.Text = "关于";
-        tsmiAboutMe2.Click += TsmiAboutMe2_Click;
-        // 
-        // tsmiExit
-        // 
-        tsmiExit.Name = "tsmiExit";
-        tsmiExit.Size = new Size(180, 22);
-        tsmiExit.Text = "退出";
-        tsmiExit.Click += TsmiExit_Click;
-        // 
-        // tss1
-        // 
-        tss1.Name = "tss1";
-        tss1.Size = new Size(177, 6);
-        // 
         // MiniForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
@@ -231,15 +184,10 @@ partial class MiniForm
         Icon = (Icon)resources.GetObject("$this.Icon");
         MainMenuStrip = msMenu;
         Name = "MiniForm";
-        StartPosition = FormStartPosition.CenterScreen;
-        Text = "基础窗体";
-        FormClosing += MiniForm_FormClosing;
-        Load += MiniForm_Load;
         msMenu.ResumeLayout(false);
         msMenu.PerformLayout();
         tsStatus.ResumeLayout(false);
         tsStatus.PerformLayout();
-        cmsMenu.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -261,10 +209,4 @@ partial class MiniForm
     private ToolStripMenuItem tsmiExportLog;
     private ToolStripMenuItem tsmiClearLog;
     private ToolStripMenuItem tsmiAboutMe;
-    private NotifyIcon notifyIcon;
-    private ContextMenuStrip cmsMenu;
-    private ToolStripMenuItem tsmiMainForm;
-    private ToolStripMenuItem tsmiAboutMe2;
-    private ToolStripMenuItem tsmiExit;
-    private ToolStripSeparator tss1;
 }

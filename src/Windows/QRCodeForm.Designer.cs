@@ -76,8 +76,7 @@ partial class QRCodeForm
         MaximizeBox = false;
         Name = "QRCodeForm";
         StartPosition = FormStartPosition.CenterScreen;
-        Text = "基础窗体";
-        Load += QRCodeForm_Load;
+        Text = "扫码窗体";
         ((ISupportInitialize)pbQRCode).EndInit();
         ResumeLayout(false);
     }

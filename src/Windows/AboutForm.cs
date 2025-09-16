@@ -8,8 +8,13 @@ namespace Xunet.MiniFormium.Windows;
 /// <summary>
 /// 关于窗体
 /// </summary>
-public partial class AboutForm : Form, IMiniFormium
+public partial class AboutForm : BaseForm, IMiniFormium
 {
+    /// <summary>
+    /// 窗体标题
+    /// </summary>
+    protected override string Title => "关于软件";
+
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -23,13 +28,13 @@ public partial class AboutForm : Form, IMiniFormium
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void AboutForm_Load(object sender, EventArgs e)
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
     {
-        var version = Assembly.GetEntryAssembly()?.GetName().Version;
+        lblAbout.Text = $"软件版本：{Version}\r\n\r\nSDK版本：{SDKVersion}\r\n\r\n开发作者：徐来（QQ386710057）\r\n\r\n个人博客：https://www.51xulai.net";
 
-        var sdkVersion = Assembly.GetExecutingAssembly().GetName().Version;
-
-        lblAbout.Text = $"软件版本：{version}\r\n\r\nSDK版本：{sdkVersion}\r\n\r\n开发作者：徐来（QQ386710057）\r\n\r\n个人博客：https://www.51xulai.net";
+        return Task.CompletedTask;
     }
 
     private void NavigateUrl_Click(object sender, EventArgs e)

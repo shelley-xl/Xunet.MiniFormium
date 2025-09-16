@@ -5,6 +5,9 @@
 
 namespace Xunet.MiniFormium.Windows;
 
+/// <summary>
+/// 关于窗体
+/// </summary>
 partial class AboutForm
 {
     /// <summary>
@@ -78,7 +81,6 @@ partial class AboutForm
         ShowInTaskbar = false;
         StartPosition = FormStartPosition.CenterScreen;
         Text = "关于软件";
-        Load += AboutForm_Load;
         ((ISupportInitialize)pbLogo).EndInit();
         ResumeLayout(false);
     }

@@ -8,41 +8,24 @@ namespace Xunet.MiniFormium.Windows;
 /// <summary>
 /// 扫码窗体
 /// </summary>
-public partial class QRCodeForm : Form, IMiniFormium
+public partial class QRCodeForm : BaseForm, IMiniFormium
 {
-    /// <summary>
-    /// 取消令牌
-    /// </summary>
-    private static CancellationTokenSource TokenSource { get; set; } = new();
-
-    /// <summary>
-    /// 窗体标题
-    /// </summary>
-    protected virtual string? Title { get; } = "扫码登录";
-
-    /// <summary>
-    /// 二维码地址
-    /// </summary>
-    protected virtual string? QRCodeUrl { get; }
-
-    /// <summary>
-    /// 二维码标题
-    /// </summary>
-    protected virtual string? QRCodeTitle { get; } = "用 [ 微信 ] 扫一扫";
+    #region 重写属性
 
     /// <summary>
     /// 二维码居中显示
     /// </summary>
     protected virtual bool IsCenterImage { get; } = false;
 
+    #endregion
+
+    #region 重写方法
+
     /// <summary>
-    /// 窗体加载
+    /// 加载二维码
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    protected virtual Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task LoadQRCodeAsync() => Task.CompletedTask;
 
     /// <summary>
     /// 检查登录
@@ -56,30 +39,27 @@ public partial class QRCodeForm : Form, IMiniFormium
     /// <returns></returns>
     protected virtual Task LoginSuccessAsync() => Task.CompletedTask;
 
+    #endregion
+
+    #region 构造函数
+
     /// <summary>
     /// 构造函数
     /// </summary>
     public QRCodeForm()
     {
         InitializeComponent();
-
-        Text = Title;
-        lblMessage.Text = QRCodeTitle;
-
-        if (!string.IsNullOrEmpty(QRCodeUrl))
-        {
-            pbQRCode.ImageLocation = QRCodeUrl;
-        }
-
-        if (IsCenterImage)
-        {
-            pbQRCode.SizeMode = PictureBoxSizeMode.CenterImage;
-        }
     }
+
+    #endregion
+
+    #region 私有方法
+
+    #region 检查登录
 
     private Task CheckLogin()
     {
-        Task.Run(async () =>
+        return Task.Run(async () =>
         {
             while (!IsDisposed && !TokenSource.IsCancellationRequested)
             {
@@ -91,27 +71,46 @@ public partial class QRCodeForm : Form, IMiniFormium
                 await Task.Delay(2000);
             }
         });
-
-        return Task.CompletedTask;
     }
 
+    #endregion
+
+    #endregion
+
+    #region 窗体加载
+
     /// <summary>
-    /// 窗体加载事件
+    /// 窗体加载
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void QRCodeForm_Load(object sender, EventArgs e)
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
     {
-        Task.WhenAll(CheckLogin(), OnLoadAsync(sender, e, TokenSource.Token));
+        if (IsCenterImage)
+        {
+            pbQRCode.SizeMode = PictureBoxSizeMode.CenterImage;
+        }
+
+        return Task.WhenAll(LoadQRCodeAsync(), CheckLogin());
     }
+
+    #endregion
+
+    #region 继承方法
+
+    #region 加载二维码
 
     /// <summary>
     /// 加载二维码
     /// </summary>
     /// <param name="url"></param>
     /// <param name="text"></param>
-    protected Task AppendQRCodeAsync(string url, string text = "用 [ 微信 ] 扫一扫")
+    protected Task AppendQRCodeAsync(string? url, string text = "用 [ 微信 ] 扫一扫")
     {
+        if (string.IsNullOrEmpty(url)) return Task.CompletedTask;
+
         InvokeOnUIThread(() =>
         {
             pbQRCode.ImageLocation = url;
@@ -126,46 +125,20 @@ public partial class QRCodeForm : Form, IMiniFormium
     /// </summary>
     /// <param name="bytes"></param>
     /// <param name="text"></param>
-    protected void AppendQRCode(byte[] bytes, string text = "用 [ 微信 ] 扫一扫")
+    protected Task AppendQRCodeAsync(byte[]? bytes, string text = "用 [ 微信 ] 扫一扫")
     {
+        if (bytes == null) return Task.CompletedTask;
+
         InvokeOnUIThread(() =>
         {
             pbQRCode.Image = Image.FromStream(new MemoryStream(bytes));
             lblMessage.Text = text;
         });
-    }
-
-    /// <summary>
-    /// 在UI线程上异步执行Action
-    /// </summary>
-    /// <param name="action"></param>
-    protected void InvokeOnUIThread(Action action)
-    {
-        if (IsDisposed || TokenSource.IsCancellationRequested) return;
-
-        if (InvokeRequired)
-        {
-            Invoke(new System.Windows.Forms.MethodInvoker(action));
-        }
-        else
-        {
-            action.Invoke();
-        }
-    }
-
-    /// <summary>
-    /// 显示主窗体
-    /// </summary>
-    /// <param name="main"></param>
-    protected Task ShowMainFormAsync(Form main)
-    {
-        InvokeOnUIThread(() =>
-        {
-            Hide();
-            main.Show();
-            main.Activate();
-        });
 
         return Task.CompletedTask;
     }
+
+    #endregion
+
+    #endregion
 }
