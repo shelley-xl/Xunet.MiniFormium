@@ -23,7 +23,10 @@ public class HomeController(ISqlSugarClient Db) : BaseController
     {
         RefAsync<int> totalNumber = new(0);
 
-        var list = await Db.Queryable<CnBlogsModel>().ToPageListAsync(page, size, totalNumber);
+        var list = await Db
+            .Queryable<CnBlogsModel>()
+            .OrderByDescending(x => x.CreateTime)
+            .ToPageListAsync(page, size, totalNumber);
 
         return XunetResult(list, totalNumber);
     }

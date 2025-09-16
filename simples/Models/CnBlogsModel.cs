@@ -6,39 +6,38 @@
 namespace Xunet.MiniFormium.Simples.Models;
 
 /// <summary>
-/// CnBlogsModel
+/// 博客园
 /// </summary>
-[SugarTable("cnblogs")]
+[SugarTable("cnblogs", "博客园")]
 public class CnBlogsModel
 {
     /// <summary>
-    /// Id
+    /// 编号
     /// </summary>
-    [Description("编号")]
-    [SugarColumn(IsPrimaryKey = true)]
-    public string? Id { get; set; }
+    [SugarColumn(ColumnDescription = "编号", IsPrimaryKey = true)]
+    public string? Id { get; set; } = SnowFlakeSingle.Instance.NextId().ToString();
 
     /// <summary>
-    /// Title
+    /// 标题
     /// </summary>
-    [Description("标题")]
+    [SugarColumn(ColumnDescription = "标题")]
     public string? Title { get; set; }
 
     /// <summary>
-    /// Url
+    /// 地址
     /// </summary>
-    [Description("地址")]
+    [SugarColumn(ColumnDescription = "地址")]
     public string? Url { get; set; }
 
     /// <summary>
-    /// Summary
+    /// 摘要
     /// </summary>
-    [Description("摘要")]
+    [SugarColumn(ColumnDescription = "摘要")]
     public string? Summary { get; set; }
 
     /// <summary>
-    /// CreateTime
+    /// 创建时间
     /// </summary>
-    [Description("创建时间")]
-    public DateTime? CreateTime { get; set; }
+    [SugarColumn(ColumnDescription = "创建时间")]
+    public DateTime? CreateTime { get; set; } = DateTime.Now;
 }

@@ -73,11 +73,9 @@ public class MainForm : MiniForm
 
             var model = new CnBlogsModel
             {
-                Id = CreateNextIdString(),
                 Title = FindText(FindElementByXPath(item, "section/div/a")),
                 Url = FindAttributeValue(FindElementByXPath(item, "section/div/a"), "href"),
                 Summary = Trim(FindText(FindElementByXPath(item, "section/div/p"))),
-                CreateTime = DateTime.Now
             };
 
             await AppendBoxAsync($"{model.Title} ...");

@@ -447,6 +447,7 @@ public partial class BaseForm : Form
     private void BaseForm_Load(object sender, EventArgs e)
     {
         Text = Title;
+        MinimumSize = Size;
 
         if (ShowTray)
         {
