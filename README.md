@@ -11,7 +11,7 @@ Support .NET 8.0+
 
 功能特性：
 
-- 轻量级现代化窗体应用框架，支持.NET 8.0及更高版本
+- 轻量级现代化桌面应用框架，支持.NET 8.0及更高版本
 - 重写DI容器，支持依赖注入
 - 自定义全局异常处理
 - 集成WebApi服务，可提供RESTful API
@@ -51,14 +51,14 @@ internal static class Program
             options.Headers = new()
             {
                 {
-                    HeaderNames.UserAgent, "Mozilla/5.0 (iPhone; CPU iPhone OS 6_1_3 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Mobile/10B329 MicroMessenger/5.0.1"
-                }
+                    HeaderNames.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+                },
             };
             options.Storage = new()
             {
                 DataVersion = "25.9.15.1036",
                 DbName = "Xunet.MiniFormium.Simples",
-                EntityTypes = [],
+                EntityTypes = [typeof(CnBlogsModel)],
             };
             options.Snowflake = new()
             {
@@ -69,9 +69,11 @@ internal static class Program
 
         builder.Services.AddWebApi((provider, services) =>
         {
-            var db = provider.GetRequiredService<ISqlSugarClient>();
-
-            services.AddSingleton(db);
+            var db = provider.GetService<ISqlSugarClient>();
+            if (db != null)
+            {
+                services.AddSingleton(db);
+            }
         });
 
         var app = builder.Build();
@@ -92,42 +94,103 @@ MainForm.cs
 ```c#
 public class MainForm : MiniForm
 {
+    /// <summary>
+    /// 窗体标题
+    /// </summary>
     protected override string Title => $"示例窗体 - {Version}";
 
+    /// <summary>
+    /// 显示系统托盘
+    /// </summary>
+    protected override bool ShowTray => true;
+
+    /// <summary>
+    /// 最小化到系统托盘
+    /// </summary>
+    protected override bool IsTray => false;
+
+    /// <summary>
+    /// 禁用关于窗体
+    /// </summary>
+    protected override bool DisabledAboutForm => false;
+
+    /// <summary>
+    /// 工作频率（单位：秒），设置 0 时仅工作一次
+    /// </summary>
     protected override int DoWorkInterval => GetConfigValue<int>("DoWorkInterval");
 
-    protected override async Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
+    /// <summary>
+    /// 窗体关闭
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
+        if (e.CloseReason == CloseReason.UserClosing)
+        {
+            Application.Exit();
+        }
+
+        return Task.CompletedTask;
     }
 
-    protected override async Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken)
-    {
-        await Task.CompletedTask;
-    }
-
+    /// <summary>
+    /// 任务执行
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     protected override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        await AppendBoxAsync("开始执行任务 ...");
+        await AppendBoxAsync("开始执行任务，请稍后 ...", ColorTranslator.FromHtml("#1296db"));
 
-        await Parallel.ForEachAsync(ParallelEnumerable.Range(1, 100), async (item, token) =>
+        var html = await DefaultClient.GetStringAsync("https://www.cnblogs.com/", cancellationToken);
+
+        CreateHtmlDocument(html);
+
+        var list = FindElementsByXPath("//*[@id=\"post_list\"]/article");
+
+        await Parallel.ForEachAsync(list, async (item, token) =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await AppendBoxAsync($"任务...{Guid.NewGuid():N}...{item}...ok");
+            var model = new CnBlogsModel
+            {
+                Id = CreateNextIdString(),
+                Title = FindText(FindElementByXPath(item, "section/div/a")),
+                Url = FindAttributeValue(FindElementByXPath(item, "section/div/a"), "href"),
+                Summary = Trim(FindText(FindElementByXPath(item, "section/div/p"))),
+                CreateTime = DateTime.Now
+            };
+
+            await AppendBoxAsync($"{model.Title} ...");
+
+            await Db.Insertable(model).ExecuteCommandAsync(cancellationToken);
 
             await Task.Delay(1000, token);
         });
 
-        await AppendBoxAsync("任务执行完成！");
+        await AppendBoxAsync("任务执行完成！", ColorTranslator.FromHtml("#1296db"));
     }
 
+    /// <summary>
+    /// 任务取消
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <returns></returns>
     protected override async Task DoCanceledAsync(OperationCanceledException ex)
     {
         await AppendBoxAsync("任务取消", Color.Red);
         await AppendBoxAsync(ex.Message, Color.Red);
     }
 
+    /// <summary>
+    /// 任务异常
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     protected override async Task DoExceptionAsync(Exception ex, CancellationToken cancellationToken)
     {
         await AppendBoxAsync("任务异常", Color.Red);
@@ -135,6 +198,10 @@ public class MainForm : MiniForm
     }
 }
 ```
+
+## 示例应用
+
+[simples](simples)
 
 ## 更新日志
 
