@@ -1,8 +1,22 @@
 # Xunet.MiniFormium
 
-基于.NET Core的轻量级现代化窗体应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储。
+基于.NET Core的轻量级现代化桌面应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储。
 
 Support .NET 8.0+
+
+功能特性：
+
+- 轻量级现代化窗体应用框架，支持.NET 8.0及更高版本
+- 重写DI容器，支持依赖注入
+- 自定义全局异常处理
+- 集成WebApi服务，可提供RESTful API
+- 内置数据持久化存储
+- 内置任务调度器，支持定时任务
+- 内置日志系统，支持日志记录
+- 支持作业暂停、开启，任务执行、取消
+- 支持在线时长、内存占用情况显示
+- 面向异步编程，支持异步方法
+- 面向对象编程，实现封装、继承、多态
 
 [![Nuget](https://img.shields.io/nuget/v/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/packages/Xunet.MiniFormium)
 [![Downloads](https://img.shields.io/nuget/dt/Xunet.MiniFormium.svg?style=flat-square)](https://www.nuget.org/stats/packages/Xunet.MiniFormium?groupby=Version)
