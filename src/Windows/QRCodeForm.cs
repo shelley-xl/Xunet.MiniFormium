@@ -19,6 +19,18 @@ public partial class QRCodeForm : BaseForm, IMiniFormium
 
     #endregion
 
+    #region 构造函数
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public QRCodeForm()
+    {
+        InitializeComponent();
+    }
+
+    #endregion
+
     #region 重写方法
 
     /// <summary>
@@ -41,15 +53,47 @@ public partial class QRCodeForm : BaseForm, IMiniFormium
 
     #endregion
 
-    #region 构造函数
+    #region 继承方法
+
+    #region 加载二维码
 
     /// <summary>
-    /// 构造函数
+    /// 加载二维码
     /// </summary>
-    public QRCodeForm()
+    /// <param name="url"></param>
+    /// <param name="text"></param>
+    protected Task AppendQRCodeAsync(string? url, string text = "用 [ 微信 ] 扫一扫")
     {
-        InitializeComponent();
+        if (string.IsNullOrEmpty(url)) return Task.CompletedTask;
+
+        InvokeOnUIThread(() =>
+        {
+            pbQRCode.ImageLocation = url;
+            lblMessage.Text = text;
+        });
+
+        return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// 加载二维码
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <param name="text"></param>
+    protected Task AppendQRCodeAsync(byte[]? bytes, string text = "用 [ 微信 ] 扫一扫")
+    {
+        if (bytes == null) return Task.CompletedTask;
+
+        InvokeOnUIThread(() =>
+        {
+            pbQRCode.Image = Image.FromStream(new MemoryStream(bytes));
+            lblMessage.Text = text;
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
 
     #endregion
 
@@ -95,50 +139,6 @@ public partial class QRCodeForm : BaseForm, IMiniFormium
 
         return Task.WhenAll(LoadQRCodeAsync(), CheckLogin());
     }
-
-    #endregion
-
-    #region 继承方法
-
-    #region 加载二维码
-
-    /// <summary>
-    /// 加载二维码
-    /// </summary>
-    /// <param name="url"></param>
-    /// <param name="text"></param>
-    protected Task AppendQRCodeAsync(string? url, string text = "用 [ 微信 ] 扫一扫")
-    {
-        if (string.IsNullOrEmpty(url)) return Task.CompletedTask;
-
-        InvokeOnUIThread(() =>
-        {
-            pbQRCode.ImageLocation = url;
-            lblMessage.Text = text;
-        });
-
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// 加载二维码
-    /// </summary>
-    /// <param name="bytes"></param>
-    /// <param name="text"></param>
-    protected Task AppendQRCodeAsync(byte[]? bytes, string text = "用 [ 微信 ] 扫一扫")
-    {
-        if (bytes == null) return Task.CompletedTask;
-
-        InvokeOnUIThread(() =>
-        {
-            pbQRCode.Image = Image.FromStream(new MemoryStream(bytes));
-            lblMessage.Text = text;
-        });
-
-        return Task.CompletedTask;
-    }
-
-    #endregion
 
     #endregion
 }

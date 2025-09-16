@@ -22,8 +22,8 @@
 		<Company>徐来</Company>
 		<Title>Xunet.MiniFormium</Title>
 		<Product>Xunet.MiniFormium</Product>
-		<Description>基于.NET Core的轻量级现代化窗体应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储。</Description>
-		<Summary>.NET轻量级现代化窗体应用</Summary>
+		<Description>基于.NET Core的轻量级现代化桌面应用，专为爬虫设计，支持标准的http请求，网页解析，网页自动化，执行js脚本等，内置.NET WebApi支持和数据持久化存储</Description>
+		<Summary>.NET轻量级桌面应用，专为爬虫设计</Summary>
 		<Copyright>Copyright © 徐来 Xulai 2025</Copyright>
 		<RootNamespace>Xunet.MiniFormium</RootNamespace>
 		<AssemblyName>Xunet.MiniFormium</AssemblyName>

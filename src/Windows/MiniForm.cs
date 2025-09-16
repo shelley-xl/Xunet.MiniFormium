@@ -10,6 +10,15 @@ namespace Xunet.MiniFormium.Windows;
 /// </summary>
 public partial class MiniForm : BaseForm, IMiniFormium
 {
+    #region 重写属性
+
+    /// <summary>
+    /// 工作频率（单位：秒），设置 0 时仅工作一次
+    /// </summary>
+    protected virtual int DoWorkInterval { get; } = 0;
+
+    #endregion
+
     #region 私有属性
 
     /// <summary>
@@ -27,15 +36,6 @@ public partial class MiniForm : BaseForm, IMiniFormium
             return DependencyResolver.Current?.GetService<WebApplication>();
         }
     }
-
-    #endregion
-
-    #region 重写属性
-
-    /// <summary>
-    /// 工作频率（单位：秒），设置 0 时仅工作一次
-    /// </summary>
-    protected virtual int DoWorkInterval { get; } = 0;
 
     #endregion
 

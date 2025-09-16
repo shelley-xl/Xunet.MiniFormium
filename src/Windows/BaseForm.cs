@@ -6,6 +6,7 @@
 namespace Xunet.MiniFormium.Windows;
 
 using HtmlAgilityPack;
+using Jint;
 
 /// <summary>
 /// 基础窗体
@@ -156,6 +157,36 @@ public partial class BaseForm : Form
 
     #endregion
 
+    #region 重写方法
+
+    #region 窗体加载
+
+    /// <summary>
+    /// 窗体加载
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
+
+    #endregion
+
+    #region 窗体关闭
+
+    /// <summary>
+    /// 窗体关闭
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
+
+    #endregion
+
+    #endregion
+
     #region 继承方法
 
     #region 获取配置
@@ -179,6 +210,54 @@ public partial class BaseForm : Form
     protected static string? GetConfigValue(string key)
     {
         return Configuration[key];
+    }
+
+    #endregion
+
+    #region 序列化
+
+    private static JsonSerializerOptions SerializerOptions(JsonNamingPolicy? namingPolicy = null, string dateFormat = "yyyy-MM-dd HH:mm:ss")
+    {
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = namingPolicy ?? JsonNamingPolicy.CamelCase,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = true,
+        };
+
+        options.Converters.Add(new DateTimeJsonConverter(dateFormat));
+
+        return options;
+    }
+
+    /// <summary>
+    /// 序列化
+    /// </summary>
+    /// <param name="value">对象值</param>
+    /// <param name="namingPolicy">命名策略</param>
+    /// <param name="dateFormat">时间格式，默认：yyyy-MM-dd HH:mm:ss</param>
+    /// <returns></returns>
+    protected static string JsonSerializeObject(object? value, JsonNamingPolicy? namingPolicy = null, string dateFormat = "yyyy-MM-dd HH:mm:ss")
+    {
+        return JsonSerializer.Serialize(value, SerializerOptions(namingPolicy, dateFormat));
+    }
+
+    #endregion
+
+    #region 反序列化
+
+    /// <summary>
+    /// 反序列化
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="json">JSON字符串</param>
+    /// <param name="namingPolicy">命名策略</param>
+    /// <param name="dateFormat">时间格式，默认：yyyy-MM-dd HH:mm:ss</param>
+    /// <returns></returns>
+    protected static T? JsonDeserializeObject<T>(string json, JsonNamingPolicy? namingPolicy = null, string dateFormat = "yyyy-MM-dd HH:mm:ss")
+    {
+        return JsonSerializer.Deserialize<T>(json, SerializerOptions(namingPolicy, dateFormat));
     }
 
     #endregion
@@ -410,33 +489,36 @@ public partial class BaseForm : Form
 
     #endregion
 
-    #endregion
-
-    #region 重写方法
-
-    #region 窗体加载
+    #region 执行JavaScript脚本
 
     /// <summary>
-    /// 窗体加载
+    /// 执行JavaScript脚本
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected virtual Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
+    /// <param name="code"></param>
+    /// <param name="method"></param>
+    /// <param name="arguments"></param>
+    protected static Task<object?> ExecuteJavaScriptAsync(string code, string method, params object?[] arguments)
+    {
+        return Task.Run(() =>
+        {
+            using var engine = new Engine();
 
-    #endregion
+            engine.Execute(code);
 
-    #region 窗体关闭
+            var value = engine.Invoke(method, arguments);
 
-    /// <summary>
-    /// 窗体关闭
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected virtual Task OnCloseAsync(object sender, FormClosingEventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
+            return value switch
+            {
+                Jint.Native.JsValue x when x.IsNumber() => x.AsNumber(),
+                Jint.Native.JsValue x when x.IsString() => x.AsString(),
+                Jint.Native.JsValue x when x.IsBoolean() => x.AsBoolean(),
+                Jint.Native.JsValue x when x.IsDate() => x.AsDate(),
+                Jint.Native.JsValue x when x.IsObject() => x.AsObject(),
+                Jint.Native.JsValue x when x.IsArray() => x.AsArray(),
+                _ => (object?)null,
+            };
+        });
+    }
 
     #endregion
 
