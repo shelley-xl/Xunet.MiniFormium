@@ -11,7 +11,7 @@ using Jint;
 /// <summary>
 /// 基础窗体
 /// </summary>
-public partial class BaseForm : Form
+public partial class BaseForm : Form, IMiniFormium
 {
     #region 重写属性
 

@@ -8,7 +8,7 @@ namespace Xunet.MiniFormium.Windows;
 /// <summary>
 /// 关于窗体
 /// </summary>
-public partial class AboutForm : BaseForm, IMiniFormium
+public partial class AboutForm : BaseForm
 {
     #region 窗体标题
 

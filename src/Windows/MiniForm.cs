@@ -8,7 +8,7 @@ namespace Xunet.MiniFormium.Windows;
 /// <summary>
 /// ÃÔÄã´°Ìå
 /// </summary>
-public partial class MiniForm : BaseForm, IMiniFormium
+public partial class MiniForm : BaseForm
 {
     #region ÖØĞ´ÊôĞÔ
 

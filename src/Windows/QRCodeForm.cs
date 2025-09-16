@@ -8,7 +8,7 @@ namespace Xunet.MiniFormium.Windows;
 /// <summary>
 /// 扫码窗体
 /// </summary>
-public partial class QRCodeForm : BaseForm, IMiniFormium
+public partial class QRCodeForm : BaseForm
 {
     #region 重写属性
 
