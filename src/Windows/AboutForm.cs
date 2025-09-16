@@ -10,10 +10,16 @@ namespace Xunet.MiniFormium.Windows;
 /// </summary>
 public partial class AboutForm : BaseForm, IMiniFormium
 {
+    #region 窗体标题
+
     /// <summary>
     /// 窗体标题
     /// </summary>
     protected override string Title => "关于软件";
+
+    #endregion
+
+    #region 构造函数
 
     /// <summary>
     /// 构造函数
@@ -22,6 +28,10 @@ public partial class AboutForm : BaseForm, IMiniFormium
     {
         InitializeComponent();
     }
+
+    #endregion
+
+    #region 窗体加载
 
     /// <summary>
     /// 窗体加载
@@ -37,6 +47,15 @@ public partial class AboutForm : BaseForm, IMiniFormium
         return Task.CompletedTask;
     }
 
+    #endregion
+
+    #region 打开链接
+
+    /// <summary>
+    /// 打开链接
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void NavigateUrl_Click(object sender, EventArgs e)
     {
         Process.Start(new ProcessStartInfo("https://www.51xulai.net")
@@ -44,4 +63,6 @@ public partial class AboutForm : BaseForm, IMiniFormium
             UseShellExecute = true,
         });
     }
+
+    #endregion
 }
