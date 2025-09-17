@@ -3,13 +3,43 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>embedded</DebugType>
+		<ApplicationIcon>Properties\Resources\favicon.ico</ApplicationIcon>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- version numbers will be updated by build -->
+		<Version>$([System.DateTime]::Now.ToString("yy.M.d.HHmm"))</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+		<Authors>徐来</Authors>
+		<Company>徐来</Company>
+		<Title>Xunet.MiniFormium.Simples</Title>
+		<Product>Xunet.MiniFormium.Simples</Product>
+		<Description>Xunet.MiniFormium.Simples</Description>
+		<Summary>Xunet.MiniFormium.Simples</Summary>
+		<Copyright>Copyright © 徐来 Xulai 2025</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\src\Xunet.MiniFormium.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
