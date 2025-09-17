@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/shelley-xl/Xunet.MiniFormium/commit/b59a1e5921e147df79ba51c23f4d96bad9e3174f) (2025-09-17)
+
+### Features
+
+- 新增随机数、随机字符串、MD5加密支持
+- 新增WebView2扩展支持
+
 ## 1.0.1 (2025-09-12)
 
 ### Features
