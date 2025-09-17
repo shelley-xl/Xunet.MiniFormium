@@ -17,6 +17,9 @@ global using Xunet.MiniFormium.Simples.Windows;
 
 namespace Xunet.MiniFormium.Simples;
 
+/// <summary>
+/// 全局引用
+/// </summary>
 internal class Usings
 {
 
