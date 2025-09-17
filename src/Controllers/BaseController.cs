@@ -16,10 +16,9 @@ public class BaseController : ControllerBase
     /// <typeparam name="TValue"></typeparam>
     /// <param name="value"></param>
     /// <param name="total"></param>
-    /// <param name="format"></param>
     /// <returns></returns>
     [NonAction]
-    public virtual IResult XunetResult<TValue>(TValue value, int? total = null, string format = "yyyy-MM-dd HH:mm:ss") where TValue : notnull
+    public virtual IResult XunetResult<TValue>(TValue value, int? total = null) where TValue : notnull
     {
         if (total.HasValue)
         {
@@ -53,6 +52,20 @@ public class BaseController : ControllerBase
         {
             Code = ResultCode.Success,
             Message = "成功",
+        });
+    }
+
+    /// <summary>
+    /// 公共操作返回
+    /// </summary>
+    /// <returns></returns>
+    [NonAction]
+    public virtual IResult XunetResult(string? error)
+    {
+        return Results.Ok(new OperateResultDto
+        {
+            Code = ResultCode.Failure,
+            Message = error ?? "失败",
         });
     }
 }
