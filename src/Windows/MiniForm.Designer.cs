@@ -56,7 +56,7 @@ partial class MiniForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(584, 361);
+        ClientSize = new Size(600, 400);
         Controls.Add(rtbMessage);
         Icon = (Icon)resources.GetObject("$this.Icon");
         Name = "MiniForm";

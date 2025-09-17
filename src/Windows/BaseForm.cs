@@ -21,6 +21,11 @@ public partial class BaseForm : Form, IMiniFormium
     protected virtual string Title { get; } = "基础窗体";
 
     /// <summary>
+    /// 窗体大小
+    /// </summary>
+    protected virtual Size WindowSize { get; } = Size.Empty;
+
+    /// <summary>
     /// 显示系统托盘
     /// </summary>
     protected virtual bool ShowTray { get; } = false;
@@ -744,6 +749,12 @@ public partial class BaseForm : Form, IMiniFormium
     private void BaseForm_Load(object sender, EventArgs e)
     {
         Text = Title;
+
+        if (!WindowSize.IsEmpty)
+        {
+            ClientSize = WindowSize;
+            MinimumSize = Size;
+        }
 
         if (ShowTray)
         {

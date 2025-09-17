@@ -73,7 +73,7 @@ partial class AboutForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(284, 261);
+        ClientSize = new Size(280, 260);
         Controls.Add(lblAbout);
         Controls.Add(pbLogo);
         FormBorderStyle = FormBorderStyle.FixedSingle;

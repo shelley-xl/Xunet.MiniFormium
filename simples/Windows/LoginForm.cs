@@ -16,6 +16,16 @@ public class LoginForm(MainForm mainForm, BrowserForm browserForm) : QRCodeForm
     protected override string Title => "扫码登录";
 
     /// <summary>
+    /// 窗体大小（建议尺寸：高度 - 宽度 = 60）
+    /// </summary>
+    protected override Size WindowSize => new(300, 360);
+
+    /// <summary>
+    /// 二维码居中显示
+    /// </summary>
+    protected override bool IsCenterImage => false;
+
+    /// <summary>
     /// 加载二维码
     /// </summary>
     /// <returns></returns>

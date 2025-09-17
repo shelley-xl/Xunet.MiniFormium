@@ -16,6 +16,11 @@ public class MainForm : MiniForm
     protected override string Title => $"示例窗体 - {Version}";
 
     /// <summary>
+    /// 窗体大小
+    /// </summary>
+    protected override Size WindowSize => new(600, 400);
+
+    /// <summary>
     /// 显示系统托盘
     /// </summary>
     protected override bool ShowTray => true;

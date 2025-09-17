@@ -10,12 +10,17 @@ namespace Xunet.MiniFormium.Windows;
 /// </summary>
 public partial class AboutForm : BaseForm
 {
-    #region 窗体标题
+    #region 重写属性
 
     /// <summary>
     /// 窗体标题
     /// </summary>
     protected override string Title => "关于软件";
+
+    /// <summary>
+    /// 窗体大小
+    /// </summary>
+    protected override Size WindowSize => new(280, 260);
 
     #endregion
 

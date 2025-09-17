@@ -211,7 +211,7 @@ partial class BaseForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(584, 361);
+        ClientSize = new Size(600, 400);
         Controls.Add(tsStatus);
         Controls.Add(msMenu);
         Icon = (Icon)resources.GetObject("$this.Icon");

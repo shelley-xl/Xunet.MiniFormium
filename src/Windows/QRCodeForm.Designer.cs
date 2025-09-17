@@ -41,10 +41,6 @@ partial class QRCodeForm
         lblMessage = new Label();
         ((ISupportInitialize)pbQRCode).BeginInit();
         SuspendLayout();
-
-        Controls.Remove(msMenu);
-        Controls.Remove(tsStatus);
-
         // 
         // pbQRCode
         // 
@@ -63,7 +59,7 @@ partial class QRCodeForm
         lblMessage.ForeColor = Color.Gray;
         lblMessage.Location = new Point(0, 303);
         lblMessage.Name = "lblMessage";
-        lblMessage.Size = new Size(300, 58);
+        lblMessage.Size = new Size(300, 57);
         lblMessage.TabIndex = 1;
         lblMessage.Text = "用 [ 微信 ] 扫一扫";
         lblMessage.TextAlign = ContentAlignment.MiddleCenter;
@@ -72,17 +68,20 @@ partial class QRCodeForm
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(300, 361);
+        ClientSize = new Size(300, 360);
         Controls.Add(lblMessage);
         Controls.Add(pbQRCode);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         Icon = (Icon)resources.GetObject("$this.Icon");
         MaximizeBox = false;
+        MinimumSize = new Size(136, 39);
         Name = "QRCodeForm";
-        StartPosition = FormStartPosition.CenterScreen;
         Text = "扫码窗体";
+        Controls.SetChildIndex(pbQRCode, 0);
+        Controls.SetChildIndex(lblMessage, 0);
         ((ISupportInitialize)pbQRCode).EndInit();
         ResumeLayout(false);
+        PerformLayout();
     }
 
     #endregion

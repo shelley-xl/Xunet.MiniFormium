@@ -95,7 +95,7 @@ partial class WebView2Form
         // 
         AutoScaleDimensions = new SizeF(7F, 17F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1200, 600);
+        ClientSize = new Size(1200, 700);
         Controls.Add(splitContainer);
         Name = "WebView2Form";
         Text = "WebView2窗体";
