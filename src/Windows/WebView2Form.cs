@@ -110,6 +110,93 @@ public partial class WebView2Form : BaseForm
 
     #endregion
 
+    #region 继承方法
+
+    #region 前进
+
+    /// <summary>
+    /// 前进
+    /// </summary>
+    /// <returns></returns>
+    protected Task WebView2ForwardAsync()
+    {
+        InvokeOnUIThread(webView2.GoForward);
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 后退
+
+    /// <summary>
+    /// 后退
+    /// </summary>
+    /// <returns></returns>
+    protected Task WebView2BackAsync()
+    {
+        InvokeOnUIThread(webView2.GoBack);
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 重新加载
+
+    /// <summary>
+    /// 重新加载
+    /// </summary>
+    /// <returns></returns>
+    protected Task WebView2ReloadAsync()
+    {
+        InvokeOnUIThread(webView2.Reload);
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 设置标签
+
+    /// <summary>
+    /// 设置标签
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    protected Task WebView2TagSetAsync(object? tag)
+    {
+        InvokeOnUIThread(() =>
+        {
+            webView2.Tag = tag;
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 跳转到指定地址
+
+    /// <summary>
+    /// 跳转到指定地址
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    protected Task WebView2NavigateAsync(string url)
+    {
+        InvokeOnUIThread(() =>
+        {
+            webView2.Source = new Uri(url);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #endregion
+
     #region 初始化完成事件
 
     private void WebView2_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)

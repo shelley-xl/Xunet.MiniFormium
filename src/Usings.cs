@@ -14,6 +14,7 @@ global using Microsoft.Web.WebView2.WinForms;
 global using Microsoft.Web.WebView2.Core;
 global using System.ComponentModel;
 global using System.Diagnostics;
+global using System.Security.Cryptography;
 global using System.Reflection;
 global using System.Runtime.InteropServices;
 global using System.Text;

@@ -616,6 +616,112 @@ public partial class BaseForm : Form, IMiniFormium
 
     #endregion
 
+    #region 创建随机数
+
+    /// <summary>
+    /// 创建随机数
+    /// </summary>
+    /// <param name="length">长度（默认：4位）</param>
+    /// <returns></returns>
+    protected static Task<string> CreateRandomNumberAsync(int length = 4)
+    {
+        if (length < 4) throw new ArgumentException("长度必须大于4", nameof(length));
+
+        return Task.Run(() =>
+        {
+            // 定义字符集
+            const string numbers1 = "123456789";
+            const string numbers2 = "0123456789";
+
+            // 使用加密学安全的随机数生成器
+            using var generator = RandomNumberGenerator.Create();
+
+            // 生成第一位数字，确保不以0开头
+            byte[] randomBytes = new byte[1];
+            generator.GetBytes(randomBytes);
+
+            // 将字节转换为字符，使用取模确保索引在有效范围内
+            var result1 = new string(randomBytes.Select(b => numbers1[b % numbers1.Length]).ToArray());
+
+            // 生成后面数字，可以是任意数字
+            randomBytes = new byte[length - 1];
+            generator.GetBytes(randomBytes);
+
+            // 将字节转换为字符，使用取模确保索引在有效范围内
+            var result2 = new string(randomBytes.Select(b => numbers2[b % numbers2.Length]).ToArray());
+
+            return result1 + result2;
+        });
+    }
+
+    #endregion
+
+    #region 创建随机字符串
+
+    /// <summary>
+    /// 创建随机字符串
+    /// </summary>
+    /// <param name="length">字符串长度（默认：8位）</param>
+    /// <returns></returns>
+    protected static Task<string> CreateRandomStringAsync(int length = 8)
+    {
+        return Task.Run(() =>
+        {
+            // 定义字符集
+            const string numbers = "0123456789";
+            const string lowerLetters = "abcdefghijklmnopqrstuvwxyz";
+            const string upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?/";
+
+            // 合并所有字符集
+            var allChars = numbers + lowerLetters + upperLetters + symbols;
+
+            // 使用加密学安全的随机数生成器
+            using var generator = RandomNumberGenerator.Create();
+
+            // 生成指定字节随机数据
+            byte[] randomBytes = new byte[length];
+            generator.GetBytes(randomBytes);
+
+            // 将字节转换为字符，使用取模确保索引在有效范围内
+            var result = new string(randomBytes.Select(b => allChars[b % allChars.Length]).ToArray());
+
+            return result;
+        });
+    }
+
+    #endregion
+
+    #region MD5加密
+
+    /// <summary>
+    /// MD5加密
+    /// </summary>
+    /// <param name="input">待加密字符串</param>
+    /// <param name="toUpper">是否转换成大写（默认：小写）</param>
+    /// <returns></returns>
+    protected static Task<string> MD5EncryptAsync(string input, bool toUpper = false)
+    {
+        return Task.Run(() =>
+        {
+            var buffer = Encoding.UTF8.GetBytes(input);
+
+            var MD5buffer = MD5.HashData(buffer);
+
+            var builder = new StringBuilder();
+
+            foreach (var item in MD5buffer)
+            {
+                if (toUpper) builder.Append(item.ToString("X2"));
+                else builder.Append(item.ToString("x2"));
+            }
+
+            return builder.ToString();
+        });
+    }
+
+    #endregion
+
     #endregion
 
     #region 私有方法
