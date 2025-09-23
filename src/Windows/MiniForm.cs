@@ -1,38 +1,38 @@
-// THIS FILE IS PART OF Xunet.MiniFormium PROJECT
+ï»¿// THIS FILE IS PART OF Xunet.MiniFormium PROJECT
 // THE Xunet.MiniFormium PROJECT IS AN OPENSOURCE LIBRARY LICENSED UNDER THE MIT License.
-// COPYRIGHTS (C) ĞìÀ´ ALL RIGHTS RESERVED.
+// COPYRIGHTS (C) å¾æ¥ ALL RIGHTS RESERVED.
 // GITHUB: https://github.com/shelley-xl/Xunet.MiniFormium
 
 namespace Xunet.MiniFormium.Windows;
 
 /// <summary>
-/// ÃÔÄã´°Ìå
+/// è¿·ä½ çª—ä½“
 /// </summary>
 public partial class MiniForm : BaseForm
 {
-    #region ÖØĞ´ÊôĞÔ
+    #region é‡å†™å±æ€§
 
     /// <summary>
-    /// ÏÔÊ¾²Ëµ¥
+    /// æ˜¾ç¤ºèœå•
     /// </summary>
     protected override bool ShowMenu => true;
 
     /// <summary>
-    /// ÏÔÊ¾×´Ì¬À¸
+    /// æ˜¾ç¤ºçŠ¶æ€æ 
     /// </summary>
     protected override bool ShowStatus => true;
 
     /// <summary>
-    /// ÈÕÖ¾¿Ø¼ş
+    /// æ—¥å¿—æ§ä»¶
     /// </summary>
     protected override RichTextBox OutputTextBox => rtbMessage;
 
     #endregion
 
-    #region ¹¹Ôìº¯Êı
+    #region æ„é€ å‡½æ•°
 
     /// <summary>
-    /// ¹¹Ôìº¯Êı
+    /// æ„é€ å‡½æ•°
     /// </summary>
     public MiniForm()
     {

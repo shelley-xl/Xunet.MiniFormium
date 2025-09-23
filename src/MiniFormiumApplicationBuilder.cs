@@ -15,9 +15,21 @@ public sealed class MiniFormiumApplicationBuilder
     /// </summary>
     public IServiceCollection Services { get; }
 
+    /// <summary>
+    /// Configuration
+    /// </summary>
+    public ConfigurationManager Configuration { get; }
+
+    /// <summary>
+    /// MiniFormiumApplicationBuilder
+    /// </summary>
     internal MiniFormiumApplicationBuilder()
     {
         Services = new ServiceCollection();
+
+        Configuration = new ConfigurationManager();
+
+        Configuration.AddJsonFile("appsettings.json", true, true);
 
         // 设置未处理异常的模式为捕获并且 ThrowException
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
