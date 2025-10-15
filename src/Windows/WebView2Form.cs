@@ -195,13 +195,56 @@ public partial class WebView2Form : BaseForm
 
     #endregion
 
+    #region 获取Cookies
+
+    /// <summary>
+    /// 获取Cookies
+    /// </summary>
+    /// <param name="url">指定url</param>
+    /// <returns></returns>
+    protected async Task<string?> WebView2GetCookiesAsync(string? url = null)
+    {
+        var cookies = await webView2.CoreWebView2.CookieManager.GetCookiesAsync(url);
+
+        if (cookies == null || cookies.Count == 0) return null;
+
+        return string.Join("; ", cookies.Select(x => $"{x.Name}={x.Value}"));
+    }
+
+    #endregion
+
+    #region 执行JavaScript脚本
+
+    /// <summary>
+    /// 执行JavaScript脚本
+    /// </summary>
+    /// <param name="script"></param>
+    /// <returns></returns>
+    protected async Task<string> WebView2ExecuteScriptAsync(string script)
+    {
+        return await webView2.ExecuteScriptAsync(script);
+    }
+
+    #endregion
+
     #endregion
 
     #region 初始化完成事件
 
     private void WebView2_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
     {
-        WebView2InitializationCompletedAsync(sender, e, TokenSource.Token);
+        try
+        {
+            WebView2InitializationCompletedAsync(sender, e, TokenSource.Token);
+        }
+        catch (OperationCanceledException ex)
+        {
+            DoCanceledAsync(ex);
+        }
+        catch (Exception ex)
+        {
+            DoExceptionAsync(ex, TokenSource.Token);
+        }
     }
 
     #endregion
@@ -210,7 +253,18 @@ public partial class WebView2Form : BaseForm
 
     private void WebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
     {
-        WebView2NavigationCompletedAsync(sender, e, TokenSource.Token);
+        try
+        {
+            WebView2NavigationCompletedAsync(sender, e, TokenSource.Token);
+        }
+        catch (OperationCanceledException ex)
+        {
+            DoCanceledAsync(ex);
+        }
+        catch (Exception ex)
+        {
+            DoExceptionAsync(ex, TokenSource.Token);
+        }
     }
 
     #endregion
@@ -219,7 +273,18 @@ public partial class WebView2Form : BaseForm
 
     private void WebView2_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
-        WebView2WebMessageReceivedAsync(sender, e, TokenSource.Token);
+        try
+        {
+            WebView2WebMessageReceivedAsync(sender, e, TokenSource.Token);
+        }
+        catch (OperationCanceledException ex)
+        {
+            DoCanceledAsync(ex);
+        }
+        catch (Exception ex)
+        {
+            DoExceptionAsync(ex, TokenSource.Token);
+        }
     }
 
     #endregion
