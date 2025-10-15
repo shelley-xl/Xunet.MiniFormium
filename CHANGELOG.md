@@ -1,3 +1,14 @@
+## [1.0.4](https://github.com/shelley-xl/Xunet.MiniFormium/commit/fd13aa85f9aaf699ace7b9c7db9a4c2878daddfa) (2025-10-15)
+
+### Features
+
+- WebView2新增获取Cookies
+- WebView2新增执行JavaScript脚本
+
+### Bug Fixes
+
+- 修复已知问题
+
 ## [1.0.3](https://github.com/shelley-xl/Xunet.MiniFormium/commit/f76eb27003ec5deb91c6395f8b7c5d8c39c62263) (2025-09-23)
 
 ### Bug Fixes
