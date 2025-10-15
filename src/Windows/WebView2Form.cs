@@ -202,13 +202,16 @@ public partial class WebView2Form : BaseForm
     /// </summary>
     /// <param name="url">指定url</param>
     /// <returns></returns>
-    protected async Task<string?> WebView2GetCookiesAsync(string? url = null)
+    protected Task<string> WebView2GetCookiesAsync(string? url = null)
     {
-        var cookies = await webView2.CoreWebView2.CookieManager.GetCookiesAsync(url);
+        return InvokeOnUIThread(async () =>
+        {
+            var cookies = await webView2.CoreWebView2.CookieManager.GetCookiesAsync(url);
 
-        if (cookies == null || cookies.Count == 0) return null;
+            if (cookies == null || cookies.Count == 0) return string.Empty;
 
-        return string.Join("; ", cookies.Select(x => $"{x.Name}={x.Value}"));
+            return string.Join("; ", cookies.Select(x => $"{x.Name}={x.Value}"));
+        });
     }
 
     #endregion
@@ -220,9 +223,12 @@ public partial class WebView2Form : BaseForm
     /// </summary>
     /// <param name="script"></param>
     /// <returns></returns>
-    protected async Task<string> WebView2ExecuteScriptAsync(string script)
+    protected Task<string> WebView2ExecuteScriptAsync(string script)
     {
-        return await webView2.ExecuteScriptAsync(script);
+        return InvokeOnUIThread(async () =>
+        {
+            return await webView2.ExecuteScriptAsync(script);
+        });
     }
 
     #endregion

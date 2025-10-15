@@ -387,6 +387,24 @@ public partial class BaseForm : Form, IMiniFormium
         }
     }
 
+    /// <summary>
+    /// 在UI线程上异步执行Action
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public T InvokeOnUIThread<T>(Func<T> method)
+    {
+        if (IsDisposed || TokenSource.IsCancellationRequested) return default!;
+
+        if (InvokeRequired)
+        {
+            return Invoke(method);
+        }
+
+        return method.Invoke();
+    }
+
     #endregion
 
     #region HtmlAgilityPack
