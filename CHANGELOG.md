@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/shelley-xl/Xunet.MiniFormium/commit/999b1046eb3bf5620fada4d35b9bd058841ef488) (2025-10-15)
+
+### Bug Fixes
+
+- 修复已知问题
+
 ## [1.0.4](https://github.com/shelley-xl/Xunet.MiniFormium/commit/fd13aa85f9aaf699ace7b9c7db9a4c2878daddfa) (2025-10-15)
 
 ### Features
