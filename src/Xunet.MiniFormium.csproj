@@ -46,13 +46,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentScheduler" Version="5.5.2" />
+		<PackageReference Include="FluentScheduler" Version="5.5.3" />
 		<PackageReference Include="Jint" Version="4.4.1" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.12.3" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3537.50" />
 		<PackageReference Include="MiniProfiler.AspNetCore" Version="4.5.4" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
-		<PackageReference Include="SqlSugarCore" Version="5.1.4.202" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+		<PackageReference Include="SqlSugarCore" Version="5.1.4.205" />
 	</ItemGroup>
 
 	<ItemGroup>
