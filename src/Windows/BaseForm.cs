@@ -873,17 +873,13 @@ public partial class BaseForm : Form, IMiniFormium
     private void BaseForm_Load(object sender, EventArgs e)
     {
         Text = Title;
+        msMenu.Visible = ShowMenu;
+        tsStatus.Visible = ShowStatus;
 
         if (!WindowSize.IsEmpty)
         {
             ClientSize = WindowSize;
             MinimumSize = Size;
-        }
-
-        if (ShowTray)
-        {
-            notifyIcon.Visible = true;
-            notifyIcon.Text = Title;
         }
 
         if (DisabledAboutForm)
@@ -892,14 +888,14 @@ public partial class BaseForm : Form, IMiniFormium
             cmsMenu.Items.Remove(tsmiAboutMe2);
         }
 
-        if (ShowMenu)
+        if (ShowTray)
         {
-            msMenu.Visible = true;
+            notifyIcon.Visible = true;
+            notifyIcon.Text = Title;
         }
 
         if (ShowStatus)
         {
-            tsStatus.Visible = true;
             Task.Run(OnlineTimerAsync);
         }
 
