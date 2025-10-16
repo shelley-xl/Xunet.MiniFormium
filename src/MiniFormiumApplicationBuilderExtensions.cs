@@ -44,6 +44,12 @@ public static class MiniFormiumApplicationBuilderExtensions
             services.AddSingleton(form);
         }
 
+        var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true);
+
+        var Configuration = config.Build();
+
+        services.AddSingleton(Configuration);
+
         return services;
     }
 
@@ -60,24 +66,21 @@ public static class MiniFormiumApplicationBuilderExtensions
 
         setupOptions?.Invoke(startupOptions);
 
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true);
-
-        var Configuration = config.Build();
-
-        services.AddSingleton(Configuration);
-
         services.AddHttpClient("default", client =>
         {
-            if (startupOptions != null && startupOptions.Headers != null)
+            if (startupOptions.Headers != null)
             {
                 foreach (var item in startupOptions.Headers)
                 {
                     client.DefaultRequestHeaders.Add(item.Key, item.Value);
                 }
             }
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            UseCookies = false
         });
 
-        if (startupOptions != null && startupOptions.Storage != null)
+        if (startupOptions.Storage != null)
         {
             services.AddSingleton<ISqlSugarClient>(db =>
             {
@@ -109,7 +112,7 @@ public static class MiniFormiumApplicationBuilderExtensions
             db.CodeFirst.InitTables(startupOptions.Storage.EntityTypes);
         }
 
-        if (startupOptions != null && startupOptions.Snowflake != null)
+        if (startupOptions.Snowflake != null)
         {
             SnowFlakeSingle.WorkId = startupOptions.Snowflake.WorkerId;
             SnowFlakeSingle.DatacenterId = startupOptions.Snowflake.DataCenterId;
