@@ -1,3 +1,9 @@
+## [1.0.7](https://github.com/shelley-xl/Xunet.MiniFormium/commit/3ba23b60c4c3fff5a69a9986e6463b029614280e) (2025-10-16)
+
+### Features
+
+- 优化应用程序启动
+
 ## [1.0.6](https://github.com/shelley-xl/Xunet.MiniFormium/commit/0fdb3ea9bb70c2614da532babe3c38b3ec724945) (2025-10-16)
 
 ### Bug Fixes
