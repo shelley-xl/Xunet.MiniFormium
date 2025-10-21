@@ -55,6 +55,36 @@ public partial class QRCodeForm : BaseForm
 
     #region 继承方法
 
+    #region 显示加载中
+
+    /// <summary>
+    /// 显示加载中
+    /// </summary>
+    /// <returns></returns>
+    protected Task ShowLoadingAsync()
+    {
+        InvokeOnUIThread(() =>
+        {
+            pbQRCode.Visible = false;
+            lblMessage.Visible = false;
+
+            var label = new Label
+            {
+                Name = "lblLoading",
+                Text = "正在加载二维码，请稍后 ...",
+                ForeColor = Color.Gray,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+            };
+
+            Controls.Add(label);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
     #region 加载二维码
 
     /// <summary>
@@ -89,6 +119,27 @@ public partial class QRCodeForm : BaseForm
             pbQRCode.Image = Image.FromStream(new MemoryStream(bytes));
             lblMessage.Text = text;
         });
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 隐藏加载中
+
+    /// <summary>
+    /// 显示加载中
+    /// </summary>
+    /// <returns></returns>
+    protected Task HideLoadingAsync()
+    {
+        InvokeOnUIThread(() =>
+        {
+            pbQRCode.Visible = true;
+            lblMessage.Visible = true;
+        });
+
+        Controls.RemoveByKey("lblLoading");
 
         return Task.CompletedTask;
     }

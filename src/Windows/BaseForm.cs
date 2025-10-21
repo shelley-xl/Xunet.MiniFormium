@@ -620,7 +620,7 @@ public partial class BaseForm : Form, IMiniFormium
             {
                 OutputTextBox.AppendText(Environment.NewLine);
             }
-            ;
+
             OutputTextBox.SelectionStart = OutputTextBox.TextLength;
             OutputTextBox.SelectionLength = 0;
             OutputTextBox.SelectionColor = color ?? Color.Black;
