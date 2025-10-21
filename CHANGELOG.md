@@ -1,3 +1,9 @@
+## [1.0.8](https://github.com/shelley-xl/Xunet.MiniFormium/commit/25f50f29eae80962c3ca075a7a68eb1984fbe001) (2025-10-21)
+
+### Features
+
+- 扫码窗体新增显示/隐藏加载中
+
 ## [1.0.7](https://github.com/shelley-xl/Xunet.MiniFormium/commit/3ba23b60c4c3fff5a69a9986e6463b029614280e) (2025-10-16)
 
 ### Features
