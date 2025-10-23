@@ -1,3 +1,11 @@
+## [1.0.9](https://github.com/shelley-xl/Xunet.MiniFormium/commit/53e1f07fcfc0bdd9339215ca89dc536932741885) (2025-10-23)
+
+### Bug Fixes
+
+- 优化WebView2加载卡顿问题
+- 优化WebView2异常处理
+- 修复已知问题
+
 ## [1.0.8](https://github.com/shelley-xl/Xunet.MiniFormium/commit/25f50f29eae80962c3ca075a7a68eb1984fbe001) (2025-10-21)
 
 ### Features
