@@ -102,6 +102,8 @@ public partial class QRCodeForm : BaseForm
             lblMessage.Text = text;
         });
 
+        CheckLogin();
+
         return Task.CompletedTask;
     }
 
@@ -118,6 +120,31 @@ public partial class QRCodeForm : BaseForm
         {
             pbQRCode.Image = Image.FromStream(new MemoryStream(bytes));
             lblMessage.Text = text;
+        });
+
+        CheckLogin();
+
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region 显示错误
+
+    /// <summary>
+    /// 显示错误
+    /// </summary>
+    /// <param name="error">错误信息</param>
+    /// <returns></returns>
+    protected Task ShowErrorAsync(string error)
+    {
+        InvokeOnUIThread(() =>
+        {
+            if (Controls.Find("lblLoading", false).FirstOrDefault() is Label lblLoading)
+            {
+                lblLoading.Text = error;
+                lblLoading.ForeColor = Color.Red;
+            }
         });
 
         return Task.CompletedTask;
@@ -188,7 +215,7 @@ public partial class QRCodeForm : BaseForm
             pbQRCode.SizeMode = PictureBoxSizeMode.CenterImage;
         }
 
-        return Task.WhenAll(LoadQRCodeAsync(), CheckLogin());
+        return LoadQRCodeAsync();
     }
 
     #endregion

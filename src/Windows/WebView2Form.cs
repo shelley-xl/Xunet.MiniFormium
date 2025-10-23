@@ -75,6 +75,14 @@ public partial class WebView2Form : BaseForm
     /// <returns></returns>
     protected virtual Task WebView2WebMessageReceivedAsync(object? sender, CoreWebView2WebMessageReceivedEventArgs e, CancellationToken cancellationToken) => Task.CompletedTask;
 
+    /// <summary>
+    /// 系统异常
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task WebView2ExceptionAsync(Exception ex, CancellationToken cancellationToken) => Task.CompletedTask;
+
     #endregion
 
     #region 窗体加载
@@ -86,26 +94,35 @@ public partial class WebView2Form : BaseForm
     /// <param name="e"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    protected override async Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
+    protected override Task OnLoadAsync(object sender, EventArgs e, CancellationToken cancellationToken)
     {
-        var UserDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xunet.MiniFormium", "cache", "WebView2Cache", Assembly.GetEntryAssembly()?.GetName().Name ?? Guid.NewGuid().ToString());
-
-        if (!Directory.Exists(UserDataDir)) Directory.CreateDirectory(UserDataDir);
-
-        // 环境选项
-        var options = new CoreWebView2EnvironmentOptions
+        Task.Run(() =>
         {
+            InvokeOnUIThread(async () =>
+            {
+                var UserDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xunet.MiniFormium", "cache", "WebView2Cache", Assembly.GetEntryAssembly()?.GetName().Name ?? Guid.NewGuid().ToString());
 
-        };
+                if (!Directory.Exists(UserDataDir)) Directory.CreateDirectory(UserDataDir);
 
-        // 使用指定的路径创建 WebView2 环境
-        // 第一个参数为 browserExecutableFolder，传入 null 表示使用系统安装的或应用自带的 WebView2 Runtime
-        var ENV = await CoreWebView2Environment.CreateAsync(null, UserDataDir, options);
+                // 环境选项
+                var options = new CoreWebView2EnvironmentOptions
+                {
 
-        // 必须在设置 Source 属性前初始化环境
-        await webView2.EnsureCoreWebView2Async(ENV);
+                };
 
-        webView2.Source = new Uri(Url);
+                // 使用指定的路径创建 WebView2 环境
+                // 第一个参数为 browserExecutableFolder，传入 null 表示使用系统安装的或应用自带的 WebView2 Runtime
+                var ENV = await CoreWebView2Environment.CreateAsync(null, UserDataDir, options);
+
+                // 必须在设置 Source 属性前初始化环境
+                await webView2.EnsureCoreWebView2Async(ENV);
+
+                webView2.Source = new Uri(Url);
+            });
+
+        }, cancellationToken);
+
+        return Task.CompletedTask;
     }
 
     #endregion
@@ -243,13 +260,9 @@ public partial class WebView2Form : BaseForm
         {
             WebView2InitializationCompletedAsync(sender, e, TokenSource.Token);
         }
-        catch (OperationCanceledException ex)
-        {
-            DoCanceledAsync(ex);
-        }
         catch (Exception ex)
         {
-            DoExceptionAsync(ex, TokenSource.Token);
+            WebView2ExceptionAsync(ex, TokenSource.Token);
         }
     }
 
@@ -263,13 +276,9 @@ public partial class WebView2Form : BaseForm
         {
             WebView2NavigationCompletedAsync(sender, e, TokenSource.Token);
         }
-        catch (OperationCanceledException ex)
-        {
-            DoCanceledAsync(ex);
-        }
         catch (Exception ex)
         {
-            DoExceptionAsync(ex, TokenSource.Token);
+            WebView2ExceptionAsync(ex, TokenSource.Token);
         }
     }
 
@@ -283,13 +292,9 @@ public partial class WebView2Form : BaseForm
         {
             WebView2WebMessageReceivedAsync(sender, e, TokenSource.Token);
         }
-        catch (OperationCanceledException ex)
-        {
-            DoCanceledAsync(ex);
-        }
         catch (Exception ex)
         {
-            DoExceptionAsync(ex, TokenSource.Token);
+            WebView2ExceptionAsync(ex, TokenSource.Token);
         }
     }
 
